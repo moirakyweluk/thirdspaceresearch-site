@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Third Space Research</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Evidence-backed strategy and research for healthcare & life sciences." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --green-900:#063f2e;
+      --green-700:#0a6249;
+      --green-600:#0f7a5a;
+      --green-500:#12a37a;
+      --green-100:#e6f5f0;
+      --ink:#0e0f10;
+      --muted:#5b646b;
+      --bg:#ffffff;
+      --ring:rgba(18,163,122,.35);
+      --radius:16px;
+      --max:1200px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:var(--ink);
+      background:var(--bg);
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+
+    /* Header / Nav */
+    .site-header{
+      position:sticky; top:0; z-index:50;
+      background:linear-gradient(180deg,var(--green-900),var(--green-700));
+      color:#fff;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .nav{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:18px 20px;
+      display:flex; align-items:center; gap:16px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px; text-decoration:none; color:#fff;
+      font-weight:700; letter-spacing:.2px;
+    }
+    .brand .logo{
+      height:28px; width:auto; display:block;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,.25));
+    }
+    .nav-links{
+      margin-left:auto; display:flex; gap:6px; flex-wrap:wrap;
+    }
+    .nav-links button{
+      appearance:none; border:0; background:transparent; color:#e8fffa;
+      padding:10px 14px; border-radius:10px; font-weight:600; cursor:pointer;
+    }
+    .nav-links button[aria-current="page"]{
+      background:rgba(255,255,255,.14);
+      box-shadow:0 0 0 1px rgba(255,255,255,.12) inset;
+    }
+    .nav-links button:focus-visible{outline:3px solid var(--ring); outline-offset:2px}
+
+    /* Views */
+    .view{display:none}
+    .view.active{display:block}
+    .container{max-width:var(--max); margin:0 auto; padding:56px 20px}
+    .hero{
+      display:grid; gap:28px; align-items:center;
+    }
+    @media (min-width:900px){
+      .hero{grid-template-columns:1.2fr .8fr}
+    }
+    .pill{
+      display:inline-flex; gap:8px; align-items:center;
+      background:var(--green-100); color:var(--green-700);
+      border-radius:999px; padding:8px 12px; font-weight:600; font-size:13px;
+    }
+    h1{font-size:clamp(28px,4.2vw,44px); line-height:1.15; margin:10px 0 14px}
+    h2{font-size:clamp(22px,3.4vw,32px); line-height:1.2; margin:0 0 16px}
+    h3{font-size:clamp(16px,2.2vw,20px); margin:10px 0}
+    p.lede{font-size:clamp(16px,2.1vw,19px); color:var(--muted); margin:0 0 18px}
+
+    .list{display:grid; gap:10px; margin:18px 0}
+    .list .item{
+      display:flex; gap:12px; align-items:flex-start;
+      background:#fff; border:1px solid #e9eef0; border-radius:12px; padding:12px 14px;
+    }
+    .dot{width:9px; height:9px; border-radius:50%; margin-top:6px; background:var(--green-500)}
+
+    /* Cards & grids */
+    .grid{display:grid; gap:18px}
+    .grid.auto{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+    @media (min-width:720px){.grid.cols-3{grid-template-columns:repeat(3,1fr)}}
+    .card{
+      border:1px solid #e9eef0; border-radius:var(--radius); background:#fff;
+      padding:18px; box-shadow:0 1px 1px rgba(10,20,30,.02), 0 4px 18px rgba(10,20,30,.04);
+    }
+    .muted{color:var(--muted)}
+
+    /* CTA Footer (persists on each view) */
+    .cta{
+      background:linear-gradient(180deg,var(--green-700),var(--green-900));
+      color:#eafff8;
+      margin-top:40px;
+    }
+    .cta .wrap{max-width:var(--max); margin:0 auto; padding:28px 20px; display:grid; gap:16px}
+    @media (min-width:800px){.cta .wrap{grid-template-columns:1fr auto; align-items:center}}
+    .cta a.btn{
+      display:inline-flex; align-items:center; gap:10px; text-decoration:none;
+      background:#fff; color:var(--green-700); font-weight:700; padding:12px 16px; border-radius:12px;
+      border:1px solid rgba(0,0,0,.06);
+    }
+    .cta a.btn:focus-visible{outline:3px solid #fff; outline-offset:2px}
+
+    /* Team */
+    .avatar{
+      width:140px; height:140px; border-radius:50%; object-fit:cover; display:block; margin:6px auto 4px;
+      box-shadow:0 0 0 6px #f6fbf9, 0 1px 16px rgba(10,20,30,.12);
+    }
+    .role{font-weight:700; text-align:center}
+
+    /* Inline button */
+    .btn-inline{
+      display:inline-flex; align-items:center; gap:10px; text-decoration:none; font-weight:700;
+      color:var(--green-700);
+    }
+    .btn-inline svg{width:18px; height:18px}
+
+    /* Logo row */
+    .logo-strip{
+      margin-top:26px; padding:14px 0;
+      border-top:1px solid #e9eef0; border-bottom:1px solid #e9eef0;
+    }
+    .logo-row{
+      display:flex; gap:24px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+      opacity:.9;
+    }
+    .logo-row svg{
+      height:26px; width:auto; display:block; filter:grayscale(100%) contrast(1.2) opacity(.85);
+    }
+
+    /* --- What We Do: filter chips & tiles --- */
+    .filters{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 18px}
+    .filter{
+      appearance:none;border:1px solid #dfede7;background:#f6fbf9;color:#0f1715;
+      padding:8px 12px;border-radius:12px;font-weight:700;cursor:pointer;font-size:14px;
+    }
+    .filter[aria-pressed="true"]{background:var(--green-600);color:#fff;border-color:var(--green-600)}
+    .service{transition:transform .18s ease, box-shadow .18s ease}
+    .service:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(10,20,30,.08)}
+    .service h3{margin:6px 0 6px}
+    .service p{margin:0 0 8px}
+    .service ul{margin:0 0 2px 18px}
+
+    /* progressive details (accessible) */
+    .details{margin-top:8px;color:var(--muted)}
+    .details[hidden]{display:none}
+    .reveal{
+      border:0;background:transparent;padding:0;margin-top:6px;
+      display:inline-flex;gap:8px;align-items:center;
+      color:var(--green-700);font-weight:700;cursor:pointer;
+    }
+    .reveal svg{width:16px;height:16px}
+
+    /* Accessibility helpers */
+    .sr-only{
+      position:absolute!important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header / Nav -->
+  <header class="site-header" role="banner">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="#home" data-link="home" onclick="navigate('home')">
+        <img class="logo" alt="Third Space Research"
+             src="https://images.squarespace-cdn.com/content/v1/63dbd7caaf346a420a8eac68/4bdc26df-da80-4edb-85ad-6ce302b79866/ThirdSpaceResearch-Logo-White.png?format=1500w">
+        <span class="sr-only">Third Space Research</span>
+      </a>
+      <div class="nav-links" role="tablist" aria-label="Sections">
+        <button role="tab" aria-controls="home"      aria-selected="true"  aria-current="page" data-link="home" onclick="navigate('home')">Home</button>
+        <button role="tab" aria-controls="team"      aria-selected="false" data-link="team" onclick="navigate('team')">The Team</button>
+        <button role="tab" aria-controls="services"  aria-selected="false" data-link="services" onclick="navigate('services')">What We Do</button>
+        <button role="tab" aria-controls="cases"     aria-selected="false" data-link="cases" onclick="navigate('cases')">Case Studies</button>
+        <button role="tab" aria-controls="why"       aria-selected="false" data-link="why" onclick="navigate('why')">Why Us</button>
+        <button role="tab" aria-controls="contact"   aria-selected="false" data-link="contact" onclick="navigate('contact')">Let’s Talk</button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Home -->
+  <main id="home" class="view active" role="tabpanel" aria-labelledby="tab-home">
+    <div class="container">
+      <span class="pill">Healthcare & Life Sciences • Evidence-Based Strategy</span>
+      <div class="hero">
+        <div>
+          <h1>Expert research strategy for healthcare & life sciences</h1>
+          <p class="lede">We help healthcare innovators make <b>evidence-based decisions</b>, validate opportunities, and launch products faster—combining <b>academic rigor</b> with <b>industry insight</b>.</p>
+          <div class="list">
+            <div class="item"><span class="dot"></span><div><b>Product & evidence strategy</b> — clarity from discovery through launch.</div></div>
+            <div class="item"><span class="dot"></span><div><b>Human-centered research</b> — patients, providers, and systems.</div></div>
+            <div class="item"><span class="dot"></span><div><b>Decision support</b> — from insights to action with measurable outcomes.</div></div>
+          </div>
+          <a class="btn-inline" href="#contact" onclick="navigate('contact')">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Book a consultation
+          </a>
+        </div>
+        <div class="card" aria-hidden="true" style="display:none"></div>
+      </div>
+
+      <!-- Logos row (clients helped) -->
+      <div class="logo-strip" aria-label="Selected clients">
+        <div class="logo-row" aria-hidden="false">
+          <svg role="img" aria-label="Novella Therapeutics" viewBox="0 0 300 40" preserveAspectRatio="xMidYMid meet">
+            <text x="0" y="28" font-size="26" font-family="Inter, Arial, sans-serif" font-weight="700">Novella Therapeutics</text>
+          </svg>
+          <svg role="img" aria-label="Synapse Health" viewBox="0 0 260 40" preserveAspectRatio="xMidYMid meet">
+            <text x="0" y="28" font-size="26" font-family="Inter, Arial, sans-serif" font-weight="700">Synapse Health</text>
+          </svg>
+          <svg role="img" aria-label="AstraLabs" viewBox="0 0 200 40" preserveAspectRatio="xMidYMid meet">
+            <text x="0" y="28" font-size="26" font-family="Inter, Arial, sans-serif" font-weight="700">AstraLabs</text>
+          </svg>
+          <svg role="img" aria-label="MediQuant" viewBox="0 0 220 40" preserveAspectRatio="xMidYMid meet">
+            <text x="0" y="28" font-size="26" font-family="Inter, Arial, sans-serif" font-weight="700">MediQuant</text>
+          </svg>
+          <svg role="img" aria-label="CareBridge" viewBox="0 0 210 40" preserveAspectRatio="xMidYMid meet">
+            <text x="0" y="28" font-size="26" font-family="Inter, Arial, sans-serif" font-weight="700">CareBridge</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Persistent CTA footer strip -->
+    <section class="cta" aria-label="Contact strip">
+      <div class="wrap">
+        <h3 style="margin:0">Ready to move from insights to impact?</h3>
+        <div><a class="btn" href="#contact" onclick="navigate('contact')">Let’s Talk</a></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Team -->
+  <section id="team" class="view" role="tabpanel" aria-labelledby="tab-team">
+    <div class="container">
+      <h2>The Team</h2>
+      <p class="muted" style="margin-top:-6px">Strategy-oriented research experts who operate at the intersection of industry and academia.</p>
+
+      <div class="grid auto" style="margin-top:18px">
+        <article class="card" aria-labelledby="moira-name">
+          <img class="avatar"
+               src="https://images.squarespace-cdn.com/content/v1/63dbd7caaf346a420a8eac68/ffd6aecb-0076-4872-8326-a6eea7d2195a/Kyweluk%2BHeadshot%2B1.jpg"
+               alt="Headshot of Moira Kyweluk" width="140" height="140">
+          <h3 id="moira-name" class="role">Moira Kyweluk, PhD, MPH</h3>
+          <p class="muted">Moira (she/her) is an anthropologist, public health expert, and insights researcher with 15+ years leading market research and human-centered design across patients, HCPs, and health systems. She delivers academically rigorous, evidence-backed strategy for pharma, healthcare, wellness, and digital health & technology.</p>
+        </article>
+
+        <article class="card" aria-labelledby="fashina-name">
+          <img class="avatar"
+               src="https://images.squarespace-cdn.com/content/v1/63dbd7caaf346a420a8eac68/842dc35c-585a-427c-91f5-44d752d7933d/1644975631872.jpg"
+               alt="Headshot of Fashina Aladé" width="140" height="140">
+          <h3 id="fashina-name" class="role">Fashina Aladé, PhD</h3>
+          <p class="muted">Shina (she/her) is a researcher & strategist specializing in education, learning sciences, and digital technologies. She designs learning-informed solutions for patient & provider education, risk minimization, and family/system education. PhD, Northwestern University; MA, Ohio State; BA, University of Pennsylvania.</p>
+        </article>
+
+        <article class="card" aria-labelledby="alison-name">
+          <img class="avatar"
+               src="https://via.placeholder.com/400x400.png?text=Alison+Brinson"
+               alt="Headshot of Alison Brinson" width="140" height="140">
+          <h3 id="alison-name" class="role">Alison Brinson, MSPH</h3>
+          <p class="muted">Alison (she/her/hers) is a mixed-methods researcher & insights specialist across qualitative and quantitative market research for healthcare delivery, health systems, and pharmaceutical products. She brings a UX lens to human-centered design for digital health and leads quant research & growth projects. MSPH, Johns Hopkins; BS, Northeastern.</p>
+        </article>
+      </div>
+    </div>
+
+    <section class="cta" aria-label="Contact strip">
+      <div class="wrap">
+        <h3 style="margin:0">Have a project in mind?</h3>
+        <div><a class="btn" href="#contact" onclick="navigate('contact')">Let’s Talk</a></div>
+      </div>
+    </section>
+  </section>
+
+  <!-- What We Do (improved, blobs removed, working details toggle) -->
+  <section id="services" class="view" role="tabpanel" aria-labelledby="tab-services">
+    <div class="container">
+      <h2>What We Do</h2>
+
+      <!-- Filter chips map 1:1 to the tiles below -->
+      <div class="filters" role="toolbar" aria-label="Filter services">
+        <button class="filter" aria-pressed="true"  data-filter="all"     onclick="filterServices('all')">All</button>
+        <button class="filter" aria-pressed="false" data-filter="discover" onclick="filterServices('discover')">Discovery & Insights</button>
+        <button class="filter" aria-pressed="false" data-filter="testing"  onclick="filterServices('testing')">Concept & Testing</button>
+        <button class="filter" aria-pressed="false" data-filter="evidence" onclick="filterServices('evidence')">Evidence & Strategy</button>
+        <button class="filter" aria-pressed="false" data-filter="launch"   onclick="filterServices('launch')">Enablement & Launch</button>
+      </div>
+
+      <!-- Concise tiles (no top/bottom blobs) -->
+      <div class="grid auto" style="margin-top:10px">
+
+        <article class="card service" data-service="discover">
+          <h3>Discovery &amp; Insights</h3>
+          <p class="muted">Understand needs, barriers, and adoption drivers across patients, HCPs, and systems.</p>
+          <ul class="muted">
+            <li>Qual &amp; quant studies</li>
+            <li>Landscape &amp; claims scans</li>
+            <li>Journey &amp; opportunity maps</li>
+          </ul>
+          <button class="reveal" type="button" aria-expanded="false" onclick="toggleDetails(this)">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            More details
+          </button>
+          <div class="details" hidden>
+            Mixed-methods plans sized to your stage: quick pulses, deep dives, or hybrid designs to de-risk next bets.
+          </div>
+        </article>
+
+        <article class="card service" data-service="testing">
+          <h3>Concept &amp; Prototype Testing</h3>
+          <p class="muted">De-risk value props, UX, and messaging before you scale.</p>
+          <ul class="muted">
+            <li>Concept &amp; message testing</li>
+            <li>Prototype &amp; usability</li>
+            <li>Positioning &amp; claims clarity</li>
+          </ul>
+          <button class="reveal" type="button" aria-expanded="false" onclick="toggleDetails(this)">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            More details
+          </button>
+          <div class="details" hidden>
+            Test with target users, payers, and HCPs; quantify lift and surface friction to guide the next iteration.
+          </div>
+        </article>
+
+        <article class="card service" data-service="evidence">
+          <h3>Evidence &amp; Strategy</h3>
+          <p class="muted">Turn findings into clear choices and defensible plans.</p>
+          <ul class="muted">
+            <li>Evidence / claims strategy</li>
+            <li>Methodologically rigorous studies</li>
+            <li>Stakeholder alignment</li>
+          </ul>
+          <button class="reveal" type="button" aria-expanded="false" onclick="toggleDetails(this)">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            More details
+          </button>
+          <div class="details" hidden>
+            From endpoints and study design to claims matrices and buy-in decks—built to stand up to scrutiny.
+          </div>
+        </article>
+
+        <article class="card service" data-service="launch">
+          <h3>Enablement &amp; Launch</h3>
+          <p class="muted">Make insights land in the real world—measure, learn, iterate.</p>
+          <ul class="muted">
+            <li>Patient &amp; HCP education</li>
+            <li>Risk minimization support</li>
+            <li>Go-to-market guidance</li>
+          </ul>
+          <button class="reveal" type="button" aria-expanded="false" onclick="toggleDetails(this)">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            More details
+          </button>
+          <div class="details" hidden>
+            Launch support that fits clinic realities: concise assets, measurement loops, and activation plans.
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+    <section class="cta" aria-label="Contact strip">
+      <div class="wrap">
+        <h3 style="margin:0">Let’s turn evidence into action.</h3>
+        <div><a class="btn" href="#contact" onclick="navigate('contact')">Let’s Talk</a></div>
+      </div>
+    </section>
+  </section>
+
+  <!-- Case Studies -->
+  <section id="cases" class="view" role="tabpanel" aria-labelledby="tab-cases">
+    <div class="container">
+      <h2>Case Studies</h2>
+      <p class="muted" style="margin-top:-6px">A few examples of how we translate research into decisions and outcomes.</p>
+
+      <div class="grid auto" style="margin-top:18px">
+        <article class="card">
+          <div class="pill" aria-label="Biopharma">Biopharma • Rare Disease</div>
+          <h3 style="margin-top:10px">De-risking value proposition for a novel diagnostic</h3>
+          <p class="muted">A biopharma partner needed clarity on HCP adoption drivers for a first-in-class diagnostic. We combined expert interviews, payer landscape scans, and iterative message testing.</p>
+          <ul class="muted" style="margin:0 0 0 18px;">
+            <li><b>Challenge:</b> Unclear decision pathways across specialties</li>
+            <li><b>Approach:</b> Mixed-methods research + claims scan</li>
+            <li><b>Output:</b> Evidence-ready positioning & claims map</li>
+          </ul>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+            <span class="pill">3× faster alignment</span><span class="pill">+28% intent to adopt</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="pill" aria-label="Digital Health">Digital Health • Behavior Change</div>
+          <h3 style="margin-top:10px">Improving onboarding to boost 90-day retention</h3>
+          <p class="muted">A chronic-care app saw early churn. We mapped patient journeys and tested onboarding concepts to reduce cognitive load and align expectations.</p>
+          <ul class="muted" style="margin:0 0 0 18px;">
+            <li><b>Challenge:</b> Low activation after day 7</li>
+            <li><b>Approach:</b> Journey mapping + prototype testing</li>
+            <li><b>Output:</b> Onboarding scripts & risk-minimization micro-content</li>
+          </ul>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+            <span class="pill">+35% day-30 activation</span><span class="pill">+18 pts NPS</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="pill" aria-label="MedTech">MedTech • Provider Workflow</div>
+          <h3 style="margin-top:10px">Positioning a device within crowded OR workflows</h3>
+          <p class="muted">We clarified use cases and operational barriers across surgeons, scrub techs, and hospital admin to shape GTM and training assets.</p>
+          <ul class="muted" style="margin:0 0 0 18px;">
+            <li><b>Challenge:</b> Competing priorities in the OR</li>
+            <li><b>Approach:</b> Contextual inquiry + claims clarity</li>
+            <li><b>Output:</b> Role-specific training + adoption playbook</li>
+          </ul>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+            <span class="pill">−22% setup time</span><span class="pill">+40% trial-to-adopt</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="pill" aria-label="Payer & Systems">Payer & Systems • Education</div>
+          <h3 style="margin-top:10px">Risk minimization program that actually lands</h3>
+          <p class="muted">We designed plain-language education for patients & HCPs, aligning with regulatory guidance while fitting busy clinic reality.</p>
+          <ul class="muted" style="margin:0 0 0 18px;">
+            <li><b>Challenge:</b> Low comprehension of REMS materials</li>
+            <li><b>Approach:</b> Co-design + readability testing</li>
+            <li><b>Output:</b> Multi-channel, role-based materials</li>
+          </ul>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+            <span class="pill">+42% correct recall</span><span class="pill">−30% support tickets</span>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <section class="cta" aria-label="Contact strip">
+      <div class="wrap">
+        <h3 style="margin:0">Want a deeper dive on a specific problem?</h3>
+        <div><a class="btn" href="#contact" onclick="navigate('contact')">Let’s Talk</a></div>
+      </div>
+    </section>
+  </section>
+
+  <!-- WHY US -->
+  <section id="why" class="view" role="tabpanel" aria-labelledby="tab-why">
+    <div class="container">
+      <h2>Why Third Space Research?</h2>
+      <div class="hero" style="margin-top:10px">
+        <div>
+          <ul class="muted" style="margin:0 0 0 18px;">
+            <li><strong>Dual-fluency:</strong> academic-grade methods + practical industry execution.</li>
+            <li><strong>Healthcare focus:</strong> depth across life sciences, medtech and digital health.</li>
+            <li><strong>Right-sized:</strong> pragmatic scoping that moves quickly without sacrificing rigor.</li>
+            <li><strong>Action-ready outputs:</strong> clear decisions, not just decks.</li>
+          </ul>
+        </div>
+        <div>
+          <img src="https://via.placeholder.com/800x520.png?text=Workshop+%2F+Synthesis" alt="Workshop synthesizing insights" style="width:100%; border-radius:12px; display:block;">
+        </div>
+      </div>
+
+      <div class="grid auto" style="margin-top:24px">
+        <div class="card" style="text-align:center">
+          <h3 style="margin:0">3×</h3>
+          <p class="muted" style="margin:6px 0 0">Faster validation cycles</p>
+        </div>
+        <div class="card" style="text-align:center">
+          <h3 style="margin:0">90%</h3>
+          <p class="muted" style="margin:6px 0 0">Stakeholder alignment</p>
+        </div>
+        <div class="card" style="text-align:center">
+          <h3 style="margin:0">100%</h3>
+          <p class="muted" style="margin:6px 0 0">Decision-ready outputs</p>
+        </div>
+      </div>
+    </div>
+
+    <section class="cta" aria-label="Contact strip">
+      <div class="wrap">
+        <h3 style="margin:0">Have a project in mind?</h3>
+        <div><a class="btn" href="#contact" onclick="navigate('contact')">Let’s Talk</a></div>
+      </div>
+    </section>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="view" role="tabpanel" aria-labelledby="tab-contact">
+    <div class="container">
+      <h2>Let’s Talk</h2>
+      <p class="muted">Tell us a bit about your product or challenge, and we’ll follow up with next steps.</p>
+
+      <div class="card">
+        <form action="https://formspree.io/f/your-endpoint" method="POST">
+          <label class="sr-only" for="name">Name</label>
+          <input id="name" name="name" type="text" placeholder="Your name" required
+                 style="width:100%;padding:12px 14px;margin:6px 0;border:1px solid #dbe5e8;border-radius:12px">
+
+          <label class="sr-only" for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="Your email" required
+                 style="width:100%;padding:12px 14px;margin:6px 0;border:1px solid #dbe5e8;border-radius:12px">
+
+          <label class="sr-only" for="message">Message</label>
+          <textarea id="message" name="message" rows="5" placeholder="How can we help?"
+                    style="width:100%;padding:12px 14px;margin:6px 0;border:1px solid #dbe5e8;border-radius:12px"></textarea>
+
+          <button type="submit"
+                  style="margin-top:6px; background:var(--green-600); color:#fff; font-weight:700; border:0; padding:12px 16px; border-radius:12px; cursor:pointer">
+            Send
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <section class="cta" aria-label="Contact strip">
+      <div class="wrap">
+        <h3 style="margin:0">Prefer email? hello@thirdspaceresearch.com</h3>
+        <div><a class="btn" href="mailto:hello@thirdspaceresearch.com">Email Us</a></div>
+      </div>
+    </section>
+  </section>
+
+  <footer class="sr-only" aria-hidden="true">© Third Space Research</footer>
+
+  <script>
+    // Basic SPA section switcher so content only shows when its tab is clicked
+    const views = Array.from(document.querySelectorAll('.view'));
+    const tabs  = Array.from(document.querySelectorAll('.nav-links button'));
+
+    function setActive(sectionId){
+      views.forEach(v => v.classList.toggle('active', v.id === sectionId));
+      tabs.forEach(t => {
+        const on = t.dataset.link === sectionId;
+        t.setAttribute('aria-current', on ? 'page' : 'false');
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+    }
+
+    function navigate(sectionId){
+      history.pushState(null, '', '#' + sectionId);
+      setActive(sectionId);
+      // move focus to the section for a11y
+      const el = document.getElementById(sectionId);
+      if (el) el.setAttribute('tabindex', '-1'), el.focus({preventScroll:true});
+    }
+
+    // Initial route
+    (function init(){
+      const target = (location.hash || '#home').slice(1);
+      setActive(target);
+    })();
+
+    window.addEventListener('hashchange', () => {
+      const target = (location.hash || '#home').slice(1);
+      setActive(target);
+    });
+
+    // --- What We Do helpers ---
+    function filterServices(key){
+      const tiles = document.querySelectorAll('.service');
+      const buttons = document.querySelectorAll('.filters .filter');
+      buttons.forEach(b => b.setAttribute('aria-pressed', b.dataset.filter === key ? 'true' : 'false'));
+      tiles.forEach(t => {
+        const show = (key === 'all') || (t.dataset.service === key);
+        t.style.display = show ? '' : 'none';
+      });
+    }
+
+    // Accessible details toggle (no hash changes)
+    function toggleDetails(btn){
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+      const details = btn.nextElementSibling;
+      if (!details) return;
+      if (details.hasAttribute('hidden')) {
+        details.removeAttribute('hidden');
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 15l6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Hide details';
+      } else {
+        details.setAttribute('hidden','');
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> More details';
+      }
+    }
+  </script>
+</body>
+</html>

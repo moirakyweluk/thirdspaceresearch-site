@@ -1,605 +1,4522 @@
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <title>Third Space Research</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Evidence-backed strategy and research for healthcare & life sciences." />
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet" />
+  <!-- Google Maps will be embedded in the page (iframe lazy-loaded) -->
 
   <style>
-    :root{
-      --green-900:#063f2e;
-      --green-700:#0a6249;
-      --green-600:#0f7a5a;
-      --green-500:#12a37a;
-      --green-100:#e6f5f0;
-      --ink:#0e0f10;
-      --muted:#5b646b;
-      --bg:#ffffff;
-      --ring:rgba(18,163,122,.35);
-      --radius:16px;
-      --max:1200px;
+/* ---- SPA view visibility (reset) ---- */
+.view { display: none !important; }
+.view.active { display: block !important; }
+
+    :root {
+      --green-900: #063f2e;
+      --green-800: #0b1f19;
+      --green-750: #0f2b22;
+      --green-700: #0a6249;
+      --green-600: #0f7a5a;
+      --green-500: #12a37a;
+      --lime: #dbffad;
+      --ink: #0e0f10;
+      --muted: #8fa2ab;
+      --bg: #ffffff;
+      --ring: rgba(18, 163, 122, 0.35);
+
+      --wrap: min(1000px, 92vw);
+      --hero-wrap: min(1000px, 94vw);
+      --radius: 20px;
+      --header-h: 72px;
+      --inter: "Inter", system-ui, -apple-system, "Segoe UI", Roboto,
+        Helvetica, Arial, sans-serif;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      color:var(--ink);
-      background:var(--bg);
-      line-height:1.6;
-      -webkit-font-smoothing:antialiased;
-      text-rendering:optimizeLegibility;
+    * {
+      box-sizing: border-box;
     }
 
-    /* Header / Nav */
-    .site-header{
-      position:sticky; top:0; z-index:50;
-      background:linear-gradient(180deg,var(--green-900),var(--green-700));
-      color:#fff;
-      border-bottom:1px solid rgba(255,255,255,.08);
-    }
-    .nav{
-      max-width:var(--max);
-      margin:0 auto;
-      padding:18px 20px;
-      display:flex; align-items:center; gap:16px;
-    }
-    .brand{
-      display:flex; align-items:center; gap:12px; text-decoration:none; color:#fff;
-      font-weight:700; letter-spacing:.2px;
-    }
-    .brand .logo{
-      height:28px; width:auto; display:block;
-      filter: drop-shadow(0 1px 2px rgba(0,0,0,.25));
-    }
-    .nav-links{
-      margin-left:auto; display:flex; gap:6px; flex-wrap:wrap;
-    }
-    .nav-links button{
-      appearance:none; border:0; background:transparent; color:#e8fffa;
-      padding:10px 14px; border-radius:10px; font-weight:600; cursor:pointer;
-    }
-    .nav-links button[aria-current="page"]{
-      background:rgba(255,255,255,.14);
-      box-shadow:0 0 0 1px rgba(255,255,255,.12) inset;
-    }
-    .nav-links button:focus-visible{outline:3px solid var(--ring); outline-offset:2px}
-
-    /* Views */
-    .view{display:none}
-    .view.active{display:block}
-    .container{max-width:var(--max); margin:0 auto; padding:56px 20px}
-    .hero{
-      display:grid; gap:28px; align-items:center;
-    }
-    @media (min-width:900px){
-      .hero{grid-template-columns:1.2fr .8fr}
-    }
-    .pill{
-      display:inline-flex; gap:8px; align-items:center;
-      background:var(--green-100); color:var(--green-700);
-      border-radius:999px; padding:8px 12px; font-weight:600; font-size:13px;
-    }
-    h1{font-size:clamp(28px,4.2vw,44px); line-height:1.15; margin:10px 0 14px}
-    h2{font-size:clamp(22px,3.4vw,32px); line-height:1.2; margin:0 0 16px}
-    h3{font-size:clamp(16px,2.2vw,20px); margin:10px 0}
-    p.lede{font-size:clamp(16px,2.1vw,19px); color:var(--muted); margin:0 0 18px}
-
-    .list{display:grid; gap:10px; margin:18px 0}
-    .list .item{
-      display:flex; gap:12px; align-items:flex-start;
-      background:#fff; border:1px solid #e9eef0; border-radius:12px; padding:12px 14px;
-    }
-    .dot{width:9px; height:9px; border-radius:50%; margin-top:6px; background:var(--green-500)}
-
-    /* Cards & grids */
-    .grid{display:grid; gap:18px}
-    .grid.auto{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
-    @media (min-width:720px){.grid.cols-3{grid-template-columns:repeat(3,1fr)}}
-    .card{
-      border:1px solid #e9eef0; border-radius:var(--radius); background:#fff;
-      padding:18px; box-shadow:0 1px 1px rgba(10,20,30,.02), 0 4px 18px rgba(10,20,30,.04);
-    }
-    .muted{color:var(--muted)}
-
-    /* CTA Footer (persists on each view) */
-    .cta{
-      background:linear-gradient(180deg,var(--green-700),var(--green-900));
-      color:#eafff8;
-      margin-top:40px;
-    }
-    .cta .wrap{max-width:var(--max); margin:0 auto; padding:28px 20px; display:grid; gap:16px}
-    @media (min-width:800px){.cta .wrap{grid-template-columns:1fr auto; align-items:center}}
-    .cta a.btn{
-      display:inline-flex; align-items:center; gap:10px; text-decoration:none;
-      background:#fff; color:var(--green-700); font-weight:700; padding:12px 16px; border-radius:12px;
-      border:1px solid rgba(0,0,0,.06);
-    }
-    .cta a.btn:focus-visible{outline:3px solid #fff; outline-offset:2px}
-
-    /* Team */
-    .avatar{
-      width:140px; height:140px; border-radius:50%; object-fit:cover; display:block; margin:6px auto 4px;
-      box-shadow:0 0 0 6px #f6fbf9, 0 1px 16px rgba(10,20,30,.12);
-    }
-    .role{font-weight:700; text-align:center}
-
-    /* Inline button */
-    .btn-inline{
-      display:inline-flex; align-items:center; gap:10px; text-decoration:none; font-weight:700;
-      color:var(--green-700);
-    }
-    .btn-inline svg{width:18px; height:18px}
-
-    /* Logo row */
-    .logo-strip{
-      margin-top:26px; padding:14px 0;
-      border-top:1px solid #e9eef0; border-bottom:1px solid #e9eef0;
-    }
-    .logo-row{
-      display:flex; gap:24px; align-items:center; justify-content:space-between; flex-wrap:wrap;
-      opacity:.9;
-    }
-    .logo-row svg{
-      height:26px; width:auto; display:block; filter:grayscale(100%) contrast(1.2) opacity(.85);
+    html,
+    body {
+      height: 100%;
     }
 
-    /* --- What We Do: filter chips & tiles --- */
-    .filters{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 18px}
-    .filter{
-      appearance:none;border:1px solid #dfede7;background:#f6fbf9;color:#0f1715;
-      padding:8px 12px;border-radius:12px;font-weight:700;cursor:pointer;font-size:14px;
+    html,
+    body,
+    .site-header,
+    .nav,
+    .nav *,
+    .view * {
+      font-family: var(--inter);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
     }
-    .filter[aria-pressed="true"]{background:var(--green-600);color:#fff;border-color:var(--green-600)}
-    .service{transition:transform .18s ease, box-shadow .18s ease}
-    .service:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(10,20,30,.08)}
-    .service h3{margin:6px 0 6px}
-    .service p{margin:0 0 8px}
-    .service ul{margin:0 0 2px 18px}
 
-    /* progressive details (accessible) */
-    .details{margin-top:8px;color:var(--muted)}
-    .details[hidden]{display:none}
-    .reveal{
-      border:0;background:transparent;padding:0;margin-top:6px;
-      display:inline-flex;gap:8px;align-items:center;
-      color:var(--green-700);font-weight:700;cursor:pointer;
+    body {
+      margin: 0;
+      color: #0c1412;
+      background: #fff;
+      line-height: 1.6;
+      overflow-x: hidden;
     }
-    .reveal svg{width:16px;height:16px}
 
-    /* Accessibility helpers */
-    .sr-only{
-      position:absolute!important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+    /* HEADER */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      height: var(--header-h);
+      background: linear-gradient(180deg, var(--green-800), var(--green-750));
+      color: #fff;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
-  </style>
+
+    .nav {
+      /* max-width: var(--wrap); */
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 10px 20px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-toggle {
+      display: none;
+      color: #fff;
+      background: transparent;
+      border: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 800;
+    }
+
+    .logo {
+      height: 56px;
+      width: 180px;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
+    }
+
+    .nav-links {
+      margin-left: 28px;
+      display: flex;
+      gap: 12px;
+      flex: 0 1 auto;
+      justify-content: flex-start;
+      align-items: center;
+      max-width: auto;
+    }
+
+    .nav-links button {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: #e8fffa;
+      cursor: pointer;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: clamp(14px, 1.1vw, 18px);
+      transition: background 0.15s ease, box-shadow 0.15s ease,
+        color 0.15s ease;
+    }
+
+    .nav-links button:hover {
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+    }
+
+    .nav-links button[aria-current="page"] {
+      background: rgba(255, 255, 255, 0.14);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    }
+
+    .nav-links button:focus-visible {
+      outline: 3px solid var(--ring);
+      outline-offset: 2px;
+    }
+
+    /* Slightly larger logo and tighter nav spacing on wide screens */
+    @media (min-width: 1400px) {
+      .logo {
+        height: 64px;
+      }
+
+      .nav-links {
+        gap: 18px;
+      }
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    /* ===== HERO LANDING ===== */
+    .hero-wrap {
+      display: grid;
+      place-items: center;
+      min-height: calc(100vh - var(--header-h));
+      background: linear-gradient(180deg, var(--green-800), var(--green-750));
+      color: #fff;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      /* reduce vertical padding to avoid pushing content below 100vh */
+      padding-block: clamp(24px, 6vh, 48px);
+    }
+
+    /* Hero fade-up animation (used when navigating between pages) */
+    .hero-wrap.fade-up {
+      animation: heroFadeUp 1500ms cubic-bezier(0.25, 0.8, 0.3, 1) both;
+      will-change: transform, opacity;
+    }
+
+    @keyframes heroFadeUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+        filter: blur(3px);
+      }
+
+      70% {
+        opacity: 1;
+        filter: blur(0);
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-wrap.fade-up {
+        animation: none;
+      }
+    }
+
+    .hero {
+      max-width: var(--hero-wrap);
+      margin: 0 auto;
+      display: grid;
+      align-items: center;
+      justify-items: center;
+      width: 100%;
+      gap: 10px;
+      grid-template-columns: 1fr minmax(0, clamp(220px, 40vw, 640px)) 1fr;
+      /* padding: clamp(12px, 3vw, 36px) clamp(12px, 4vw, 44px); */
+    }
+
+    .hero-side {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+      text-transform: uppercase;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      line-height: 1;
+      max-width: 100%;
+      align-self: center;
+    }
+
+    .hero>.hero-side:first-of-type {
+      align-items: flex-end;
+      text-align: right;
+    }
+
+    .hero>.hero-side:last-of-type {
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .hero-side .kicker {
+      font-size: clamp(14px, 1.8vw, 26px);
+      opacity: 0.9;
+    }
+
+    .hero-side .big {
+      white-space: normal;
+      /* font-size: clamp(32px, 7.6vw, 96px); */
+      font-size: 74px;
+      line-height: 0.9;
+      margin: 0;
+      word-break: normal;
+    }
+
+    .hover-accent {
+      color: #fff;
+      transition: color 0.15s ease;
+    }
+
+    .hover-accent:hover {
+      color: var(--green-500);
+    }
+
+    .hero-core {
+      grid-column: 2;
+      position: relative;
+      padding: clamp(16px, 2.2vw, 28px);
+      text-align: center;
+      z-index: 1;
+    }
+
+    .hero-core p {
+      margin: 0 auto;
+      /* max-width: 48ch; */
+      max-width: 32ch;
+      /* font-size: clamp(16px, 1.6vw, 20px); */
+      font-size: 16px;
+      line-height: 1.55;
+      letter-spacing: 0.02em;
+      color: #f4fff9;
+      text-wrap: balance;
+    }
+
+    .hero-core::before,
+    .hero-core::after {
+      content: "";
+      position: absolute;
+      width: clamp(34px, 4vw, 60px);
+      height: clamp(34px, 4vw, 60px);
+      border: 3px solid var(--green-500);
+      opacity: 0.9;
+    }
+
+    .hero-core::before {
+      top: 0;
+      left: 0;
+      border-right: none;
+      border-bottom: none;
+      border-radius: 6px 0 0 0;
+    }
+
+    .hero-core::after {
+      bottom: 0;
+      right: 0;
+      border-left: none;
+      border-top: none;
+      border-radius: 0 0 6px 0;
+    }
+
+    .hero-sub {
+      max-width: var(--wrap);
+      margin: 0 auto;
+      padding: 0 20px 8px;
+      text-align: center;
+    }
+
+    .hero-sub p {
+      margin: 0 0 18px;
+      font-size: clamp(18px, 2.1vw, 20px);
+      font-weight: 700;
+      color: #e9fff6;
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      height: 48px;
+      padding: 0 26px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      color: #fff;
+      background: transparent;
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      border-radius: 999px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--green-500);
+      color: var(--green-500);
+    }
+
+    @media (max-width: 1200px) {
+      .hero {
+        grid-template-columns: 1fr clamp(200px, 24vw, 480px) 1fr;
+      }
+    }
+
+    @media (max-width: 980px) {
+
+      /* keep three columns visually but allow sides to shrink */
+      .hero {
+        grid-template-columns: minmax(48px, 1fr) minmax(0, clamp(220px, 50vw, 520px)) minmax(48px, 1fr);
+        gap: clamp(12px, 6vw, 28px);
+        padding: clamp(14px, 5vw, 28px) 16px;
+      }
+
+      .hero-side {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .hero-side .big {
+        font-size: 40px;
+      }
+
+      .hero-core p {
+        max-width: 36ch;
+        font-size: clamp(15px, 3.6vw, 18px);
+      }
+    }
+
+    /* If viewport height is small (e.g., mobile browsers with UI chrome), reduce hero padding */
+    @media (max-height: 720px) {
+      .hero-wrap {
+        padding-block: clamp(12px, 4vh, 24px);
+      }
+
+      .hero {
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+    }
+
+    /* ===== LOGO CIRCLES with Hover Quotes ===== */
+    .logo-band {
+      background: #f7fbf9;
+      /* more breathing room overall (esp. bottom) */
+      padding-top: clamp(88px, 12vh, 160px);
+      padding-bottom: clamp(160px, 20vh, 280px);
+    }
+
+    .logo-band .wrap {
+      max-width: var(--wrap);
+      margin: 0 auto;
+      padding: clamp(48px, 8vh, 96px) 20px clamp(72px, 10vh, 140px);
+      text-align: center;
+      overflow: visible;
+    }
+
+    .logo-heading {
+      font-weight: 900;
+      color: #0e3b31;
+      font-size: clamp(22px, 3.2vw, 36px);
+      margin: 0 0 clamp(40px, 5vw, 64px);
+    }
+
+    .badge-row {
+      display: grid;
+      gap: clamp(48px, 5vw, 80px);
+      /* roomier spacing between badges */
+      align-items: end;
+      justify-items: center;
+      grid-template-columns: repeat(5, minmax(120px, 1fr));
+    }
+
+    #badgeRow .badge.in {
+      padding: 20px;
+      background-color: white;
+    }
+
+    @media (max-width: 980px) {
+      .badge-row {
+        grid-template-columns: repeat(3, minmax(120px, 1fr));
+        margin-top: 8px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .badge-row {
+        grid-template-columns: repeat(2, minmax(120px, 1fr));
+      }
+    }
+
+    @media (max-width: 381px) {
+      .badge-row {
+        grid-template-columns: 1fr;
+        gap: clamp(18px, 6vw, 28px);
+        align-items: center;
+      }
+
+      .badge {
+        width: clamp(84px, 28vw, 120px);
+        height: clamp(84px, 28vw, 120px);
+        transform: translateY(30px);
+        font-size: clamp(16px, 4.2vw, 20px);
+      }
+
+      .badge-label {
+        font-size: 13px;
+        bottom: 6px;
+      }
+
+      .badge-quote {
+        left: 50%;
+        transform: translateX(-50%) scale(0.98);
+        width: min(90%, 320px);
+        font-size: 14px;
+      }
+    }
+
+    .badge {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: #0e3b31;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+      font-size: 28px;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.05),
+        0 10px 24px rgba(10, 20, 30, 0.1);
+      transform: translateY(60px);
+      opacity: 0;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      overflow: visible;
+    }
+
+    .badge:hover {
+      transform: translateY(0);
+      box-shadow: 0 12px 28px rgba(10, 20, 30, 0.18);
+    }
+
+    .badge img {
+      width: 100%;
+      height: 100%;
+      background-color: white;
+      object-fit: contain;
+      border-radius: 50%;
+      display: block;
+    }
+
+    .badge-label {
+      position: absolute;
+      bottom: 10px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 12px;
+      letter-spacing: 0.2px;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    }
+
+    .badge-quote {
+      position: absolute;
+      top: calc(100% + 16px);
+      left: 50%;
+      transform: translateX(-50%) scale(0.92);
+      opacity: 0;
+      z-index: 5;
+      width: clamp(220px, 26vw, 320px);
+      padding: clamp(12px, 1.2vw, 16px) clamp(14px, 1.6vw, 18px);
+      background: transparent;
+      color: #0e3b31;
+      font-size: clamp(15px, 1.25vw, 18px);
+      line-height: 1.5;
+      box-shadow: none;
+      border: none;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .badge-quote::before,
+    .badge-quote::after {
+      content: "";
+      position: absolute;
+      width: clamp(24px, 3vw, 40px);
+      height: clamp(24px, 3vw, 40px);
+      border: 3px solid var(--green-500);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .badge-quote::before {
+      top: 0;
+      left: 0;
+      border-right: none;
+      border-bottom: none;
+      border-radius: 6px 0 0 0;
+    }
+
+    .badge-quote::after {
+      bottom: 0;
+      right: 0;
+      border-left: none;
+      border-top: none;
+      border-radius: 0 0 6px 0;
+    }
+
+    .badge:hover .badge-quote {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+
+    .badge.in {
+      animation: flyUp 0.8s ease forwards;
+    }
+
+    @keyframes flyUp {
+      from {
+        transform: translateY(60px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .badge {
+        transform: none;
+        opacity: 1;
+      }
+
+      .badge.in {
+        animation: none;
+      }
+    }
+
+    /* ===== GLOBAL MAP SECTION ===== */
+    .map-section {
+      max-width: var(--hero-wrap);
+      margin: 0 auto;
+      padding: 56px 20px 90px;
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+
+    .map-section.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    .map-section,
+    .map-section * {
+      font-family: var(--inter);
+    }
+
+    .map-head {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 28px;
+      align-items: end;
+      margin-bottom: 28px;
+    }
+
+    .map-title {
+      margin: 0;
+      font-weight: 900;
+      line-height: 1.06;
+      font-size: clamp(28px, 4.5vw, 48px);
+      color: #0e0f10;
+      position: relative;
+      padding-bottom: 14px;
+    }
+
+    .map-title::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 38%;
+      height: 4px;
+      bottom: 0;
+      background: linear-gradient(90deg, #14b47a, #6ee7b7, #6d68ff);
+      border-radius: 999px;
+    }
+
+    .map-copy {
+      margin: 0;
+      color: #2b3439;
+      max-width: 48ch;
+    }
+
+    .map-grid {
+      margin-top: 34px;
+      display: grid;
+      gap: 0;
+      grid-template-columns: 1fr;
+    }
+
+    .map-card {
+      background: #f5f7f6;
+      border: 1px solid #e6eeea;
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .map-card img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      display: block;
+    }
+
+    /* Map container (Google Maps iframe will fill this) */
+    #globalMap {
+      width: 100%;
+      height: 420px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    #globalMap iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      border-radius: 12px;
+    }
+
+    @media (max-width: 980px) {
+      .map-head {
+        grid-template-columns: 1fr;
+      }
+
+      .map-title::after {
+        right: 0;
+      }
+    }
+
+    /* ===== WHAT WE DO / CASES / CONTACT (existing) ===== */
+    #services .section {
+      max-width: var(--wrap);
+      margin: 0 auto;
+      padding: 56px 20px;
+    }
+
+    .highlight-hero {
+      background: #fff;
+      padding: 48px 20px 24px;
+    }
+
+    .hl-wrap {
+      max-width: var(--wrap);
+      margin: 0 auto;
+    }
+
+    .hl-top {
+      display: inline-block;
+      background: var(--lime);
+      padding: 18px 22px;
+      border-radius: 14px;
+    }
+
+    .hl-top h1 {
+      margin: 0;
+      font-weight: 900;
+      line-height: 1.05;
+      font-size: clamp(36px, 4.8vw, 64px);
+      color: #0b2530;
+    }
+
+    .hl-bottom {
+      display: inline-block;
+      background: var(--lime);
+      padding: 12px 18px;
+      border-radius: 12px;
+      margin-top: 12px;
+    }
+
+    .hl-bottom span {
+      font-size: clamp(28px, 3.6vw, 40px);
+      font-weight: 900;
+      color: #0b2530;
+    }
+
+    .section h2 {
+      margin: 0 0 16px;
+      font-size: clamp(26px, 3.2vw, 36px);
+      font-weight: 900;
+      color: #0e3b31;
+    }
+
+    .grid-wwd {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #e7efea;
+      border-radius: 24px;
+      padding: 24px 20px;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 10px 28px rgba(10, 20, 30, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .card .icon {
+      font-size: 28px;
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      border: 2px solid #0d3b2f;
+      margin-bottom: 8px;
+    }
+
+    .card h3 {
+      margin: 6px 0;
+      font-size: 20px;
+      font-weight: 800;
+      color: #0d3b2f;
+    }
+
+    .card p {
+      margin: 0;
+      color: #2b3439;
+    }
+
+    
+
+    .cs-body {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .cs-date {
+      font-size: 12px;
+      letter-spacing: 0.3px;
+      color: #6a7a80;
+    }
+
+    .cs-title {
+      font-weight: 800;
+      font-size: 20px;
+      line-height: 1.3;
+      color: #0e3b31;
+      margin: 0;
+    }
+
+    .cs-text {
+      color: #2b3439;
+      margin: 0;
+    }
+
+    .cs-actions {
+      margin-top: auto;
+    }
+
+    .chip-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      text-decoration: none;
+      color: #0e3b31;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1.6px solid #dbe8e3;
+      transition: all 0.15s ease;
+    }
+
+    .chip-link:hover {
+      border-color: var(--green-500);
+      color: #0e3b31;
+    }
+
+    /* Case studies carousel */
+    .cs-carousel {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .cs-track-wrap {
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .cs-track {
+      display: flex;
+      gap: 20px;
+      transition: transform 420ms cubic-bezier(.2, .9, .3, 1);
+      will-change: transform;
+      /* align-items: flex-start; */
+      align-items: stretch;
+      /* Ensures equal height for flex items */
+
+    }
+
+    /* Force single-card-per-page layout: image on top, text below */
+    .cs-card {
+      flex: 0 0 100%;
+      min-width: 100%;
+      min-height: 520px;
+      /* adjust as needed based on design */
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 14px;
+    }
+
+    .cs-media {
+      width: 100%;
+      height: 220px;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    .cs-media img { width:100%; height:100%; object-fit:cover; display:block; border-radius:16px; }
+
+    .cs-body {
+      padding: 6px 4px 0;
+      flex: 1;
+      /* Fills available space */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .cs-title {
+      font-size: 18px;
+    }
+
+    .cs-text {
+      font-size: 15px;
+      color: #4a5654;
+    }
+
+    /* two-up on medium */
+    @media (min-width: 760px) {
+      .cs-card {
+        flex: 0 0 calc(50% - 10px);
+        min-width: calc(50% - 10px);
+      }
+    }
+
+    /* three-up on wide screens */
+    @media (min-width: 1200px) {
+      .cs-card {
+        flex: 0 0 calc(33.333% - 13.333px);
+        min-width: calc(33.333% - 13.333px);
+      }
+    }
+
+    .cs-prev,
+    .cs-next {
+      background: rgba(0, 0, 0, 0.06);
+      border: 0;
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: inline-grid;
+      place-items: center;
+      cursor: pointer;
+      font-size: 24px;
+      color: #073524;
+    }
+
+    .cs-prev[disabled],
+    .cs-next[disabled] {
+      opacity: 0.35;
+      cursor: default;
+    }
+
+    .case-hero {
+      position: relative;
+      color: #fff;
+      background: #0a1f18;
+      min-height: 420px;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .case-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg,
+          rgba(0, 0, 0, 0.35) 0%,
+          rgba(0, 0, 0, 0.55) 70%);
+    }
+
+    .case-hero img.bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.75);
+    }
+
+    .case-back {
+      position: absolute;
+      top: calc(var(--header-h) + 6px);
+      left: 22px;
+      z-index: 2;
+    }
+
+    .case-back a {
+      color: #eafff6;
+      text-decoration: none;
+      font-weight: 800;
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .case-title {
+      position: relative;
+      z-index: 2;
+      max-width: var(--wrap);
+      margin: 0 auto;
+      padding: 24px 20px 28px;
+    }
+
+    .case-title .eyebrow {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.12);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .case-title h1 {
+      margin: 10px 0 6px;
+      font-size: clamp(28px, 4.4vw, 56px);
+      line-height: 1.05;
+      font-weight: 900;
+    }
+
+    .case-title p {
+      margin: 0;
+      color: #e7fff6;
+      max-width: 70ch;
+    }
+
+    .case-body {
+      max-width: var(--wrap);
+      margin: 0 auto;
+      padding: 28px 20px 56px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    @media (min-width: 1100px) {
+      .case-body {
+        /* left: text column, right: image/content column */
+        grid-template-columns: minmax(520px, 1fr) 480px;
+        /* slightly wider image column */
+        /* allow the right column to stretch to the left column height */
+        align-items: stretch;
+      }
+    }
+
+    @media (min-width: 1400px) {
+      .case-body {
+        grid-template-columns: minmax(600px, 1fr) 560px;
+        /* larger viewports: more image width */
+      }
+    }
+
+    .case-box {
+      background: #fff;
+      border: 1px solid #e8eee9;
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .case-box h3 {
+      margin: 0 0 10px;
+      color: #0e3b31;
+    }
+
+    /* Ensure images in the right column fill the text height */
+    /* allow grid children to shrink properly and make the right column fill height */
+    .case-body>div {
+      min-height: 0;
+    }
+
+    .case-body>div:last-child {
+      display: flex;
+      align-items: stretch;
+    }
+
+
+
+
+.case-body > div:last-child {
+  display: flex;
+  align-items: stretch;
+}
+
+.case-body > div:last-child img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* ensures full image is visible without zoom */
+  object-position: center; /* keeps subject centered */
+  border-radius: 14px;
+  border: 1px solid #e7efea;
+  box-shadow: 0 8px 24px rgba(10, 20, 30, 0.08);
+  display: block;
+}
+
+
+
+
+
+    .quote {
+      background: #f2faf7;
+      border-left: 4px solid var(--green-600);
+      border-radius: 14px;
+      padding: 16px 18px;
+      color: #0f3a2e;
+    }
+
+    /* ==== CONTACT (LET'S TALK) ==== */
+    #contact {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      color: #fff;
+      background: linear-gradient(180deg,
+          rgba(11, 31, 25, 0.8),
+          rgba(11, 31, 25, 0.8)),
+        url("https://raw.githubusercontent.com/moirakyweluk/thirdspaceresearch-site/refs/heads/main/NYC%20night.jpg") center/cover no-repeat fixed;
+    }
+
+    .contact-wrap {
+      max-width: var(--wrap);
+      margin: 0 auto;
+      padding: 56px 20px;
+      width: 100%;
+    }
+
+    .contact-2col {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    @media (max-width: 980px) {
+      .contact-2col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .contact-copy h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 4.6vw, 48px);
+      line-height: 1.1;
+      font-weight: 900;
+    }
+
+    .contact-copy .sub {
+      margin: 0 0 18px;
+      font-weight: 800;
+    }
+
+    .contact-copy .quote {
+      margin: 0 0 18px;
+      max-width: 56ch;
+      font-weight: 500;
+      opacity: 0.95;
+    }
+
+    .contact-copy .byline {
+      margin: 0 0 28px;
+      opacity: 0.9;
+      font-weight: 600;
+    }
+
+    .contact-copy .jj {
+      font-size: 42px;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      margin-top: 4px;
+      opacity: 0.95;
+    }
+
+    .form-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .field {
+      width: 100%;
+      height: 40px;
+      border-radius: 999px;
+      border: 0;
+      outline: none;
+      padding: 0 22px;
+      font-size: 14px;
+      color: #0e0f10;
+      background: #fff;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.18);
+    }
+
+    .field::placeholder {
+      color: #8aa0a7;
+    }
+
+    .field-tall {
+      height: auto;
+      border-radius: 28px;
+      padding: 14px 18px;
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .submit-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 6px;
+    }
+
+    .submit-btn {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      background: #27d17c;
+      color: #073524;
+      border-radius: 999px;
+      padding: 14px 28px;
+      box-shadow: 0 10px 22px rgba(39, 209, 124, 0.35);
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(39, 209, 124, 0.42);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .contact-note {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #dcfff0;
+    }
+
+    /* ==== SITE FOOTER ==== */
+    .site-footer {
+      background: var(--green-800);
+      color: #fff;
+      font-family: var(--inter);
+      padding: 24px 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .site-footer .wrap {
+      max-width: var(--wrap);
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px 18px;
+    }
+
+    .site-footer .small {
+      opacity: 0.92;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      font-size: 13px;
+    }
+
+    .site-footer a {
+      color: #cffff1;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .site-footer a:hover {
+      color: var(--lime);
+      border-bottom-color: var(--lime);
+    }
+
+    /* FORCE 4-UP LAYOUT FOR THE "WHAT WE DO" GRIDS */
+    #services .grid-wwd {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: repeat(4, 1fr);
+      max-width: var(--wrap);
+      margin: 0 auto;
+    }
+
+    @media (max-width: 1100px) {
+      #services .grid-wwd {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 650px) {
+      #services .grid-wwd {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ===== WHAT WE DO: move hero copy to TOP-LEFT ===== */
+    .services-hero {
+      position: relative;
+      min-height: min(70vh, 720px);
+      display: grid;
+      align-items: start;
+      /* top */
+      color: #fff;
+      background: linear-gradient(180deg,
+          rgba(0, 0, 0, 0.35),
+          rgba(0, 0, 0, 0.55)),
+        url("https://images.unsplash.com/photo-1522199710521-72d69614c702?q=80&w=2000&auto=format&fit=crop") center/cover no-repeat;
+      border-bottom: 1px solid #e7efea;
+    }
+
+    .services-hero .inner {
+      text-align: left;
+      margin: 0;
+      margin-left: clamp(20px, 4vw, 48px);
+      margin-right: auto;
+      padding: clamp(16px, 3vw, 32px) 0;
+      /* slimmer top padding so it sits near the top */
+      max-width: min(900px, 92vw);
+    }
+
+    .services-eyebrow {
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.95;
+      margin: 0 0 8px;
+      font-size: clamp(14px, 1.4vw, 18px);
+    }
+
+    .services-title {
+      margin: 0 0 10px;
+      font-weight: 900;
+      line-height: 1.04;
+      font-size: clamp(40px, 7vw, 86px);
+      text-wrap: balance;
+    }
+
+    .services-sub {
+      margin: 0;
+      max-width: 62ch;
+      font-size: clamp(16px, 1.6vw, 20px);
+      opacity: 0.95;
+    }
+
+    .services-intro {
+      background: #fff;
+      padding: clamp(48px, 8vw, 96px) 20px;
+    }
+
+    .services-intro .wrap {
+      max-width: min(1200px, 92vw);
+      margin: 0 auto;
+      display: grid;
+      gap: 24px;
+    }
+
+    .services-intro h2 {
+      margin: 0;
+      font-weight: 900;
+      color: #09372c;
+      font-size: clamp(32px, 4.8vw, 56px);
+      text-align: center;
+      text-wrap: balance;
+    }
+
+    .services-intro p {
+      margin: 0 auto;
+      max-width: 86ch;
+      text-align: center;
+      color: #2b3439;
+      font-size: clamp(16px, 1.5vw, 20px);
+      line-height: 1.7;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .reveal.in {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* === case study  === */
+
+
+
+    .case-study-hero {
+      position: relative;
+      width: 100%;
+      min-height: min(70vh, 720px);
+      display: grid;
+      align-items: start;
+
+      color: #fff;
+
+      background: url("./Boy in bed.png") center/cover no-repeat;
+
+      border-bottom: 1px solid #e7efea;
+    }
+
+    .case-study-hero .inner {
+      text-align: left;
+      margin: 0;
+      margin-left: clamp(20px, 4vw, 48px);
+      margin-right: auto;
+      padding: clamp(16px, 3vw, 32px) 0;
+      /* slimmer top padding so it sits near the top */
+      max-width: min(900px, 92vw);
+    }
+
+    .case-study-eyebrow {
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.95;
+      margin: 0 0 8px;
+      font-size: clamp(14px, 1.4vw, 18px);
+    }
+
+    .case-study-title {
+      margin: 0 0 10px;
+      font-weight: 900;
+      line-height: 1.04;
+      font-size: clamp(40px, 7vw, 86px);
+      text-wrap: balance;
+    }
+
+    .case-study-sub {
+      margin: 0;
+      max-width: 62ch;
+      font-size: clamp(16px, 1.6vw, 20px);
+      opacity: 0.95;
+    }
+
+    .case-study-intro {
+      background: #fff;
+      padding: clamp(48px, 8vw, 96px) 20px;
+    }
+
+    .case-study-intro .wrap {
+      max-width: min(1200px, 92vw);
+      margin: 0 auto;
+      display: grid;
+      gap: 24px;
+    }
+
+    .case-study-intro h2 {
+      margin: 0;
+      font-weight: 900;
+      color: #09372c;
+      font-size: clamp(32px, 4.8vw, 56px);
+      text-align: center;
+      text-wrap: balance;
+    }
+
+    .case-study-intro p {
+      margin: 0 auto;
+      max-width: 86ch;
+      text-align: center;
+      color: #2b3439;
+      font-size: clamp(16px, 1.5vw, 20px);
+      line-height: 1.7;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .reveal.in {
+      opacity: 1;
+      transform: none;
+    }
+
+
+
+
+
+    /* === WHY US === */
+    #why,
+    #why * {
+      font-family: var(--inter);
+    }
+
+    /* 1) HERO */
+    .why-hero {
+      position: relative;
+      color: #fff;
+      /* min-height: calc(100vh - var(--header-h)); */
+      min-height: min(70vh, 720px);
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      background: linear-gradient(180deg,
+          rgba(0, 0, 0, 0.35),
+          rgba(0, 0, 0, 0.55)),
+        url("https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=2000&auto=format&fit=crop") center/cover no-repeat;
+    }
+
+    .why-hero .inner {
+      max-width: var(--hero-wrap);
+      margin: 0 auto;
+      width: 100%;
+      padding: clamp(96px, 16vh, 180px) 20px 48px;
+      text-align: left;
+    }
+
+    .why-eyebrow {
+      margin: 0 0 10px;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      font-size: clamp(36px, 6vw, 72px);
+      line-height: 1.02;
+    }
+
+    .why-sub {
+      margin: 0;
+      max-width: 62ch;
+      font-size: clamp(16px, 1.6vw, 20px);
+      color: #f2fffa;
+      opacity: 0.95;
+    }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 52px;
+      padding: 0 26px;
+      margin-top: 26px;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      color: #fff;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+
+    .btn-outline:hover {
+      border-color: #6ee7b7;
+      color: #6ee7b7;
+    }
+
+    /* 2) Two alternating rows */
+    .why-what {
+      position: relative;
+      background: #f5faf7;
+      overflow: hidden;
+      padding: clamp(72px, 10vw, 140px) 20px;
+    }
+
+    .why-what::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at center,
+          rgba(9, 55, 44, 0.06) 0 10px,
+          transparent 11px) 0 0 / 140px 140px repeat;
+      opacity: 0.6;
+    }
+
+    .why-what .wrap {
+      max-width: min(1200px, 92vw);
+      margin: 0 auto;
+      display: block;
+    }
+
+    .why-row {
+      display: flex;
+      align-items: center;
+      gap: clamp(28px, 5vw, 72px);
+      margin-bottom: clamp(56px, 10vw, 120px);
+    }
+
+    .why-row.reverse {
+      flex-direction: row-reverse;
+    }
+
+    .why-what .circle {
+      width: min(420px, 36vw);
+      aspect-ratio: 1/1;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 0 0 10px #fff, 0 18px 40px rgba(10, 20, 30, 0.22);
+      background: #fff;
+    }
+
+    .why-what .circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .why-what .copy h2 {
+      margin: 0 0 8px;
+      font-weight: 900;
+      color: #0f3a2e;
+      font-size: clamp(36px, 5.4vw, 64px);
+      letter-spacing: 0.01em;
+    }
+
+    .why-what .copy p {
+      margin: 0;
+      color: #223136;
+      font-size: clamp(16px, 1.5vw, 20px);
+      line-height: 1.8;
+      max-width: 66ch;
+    }
+
+    /* Row-specific accents */
+    .why-what .why-row:first-child .circle {
+      position: relative;
+    }
+
+    .why-what .why-row:first-child .circle::after {
+      content: "";
+      position: absolute;
+      left: -8px;
+      bottom: -8px;
+      width: clamp(140px, 16vw, 220px);
+      height: clamp(18px, 2vw, 26px);
+      background: #ffd64e;
+      border-radius: 999px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    }
+
+    .why-what .why-row:nth-of-type(2) .circle {
+      position: relative;
+    }
+
+    .why-what .why-row:nth-of-type(2) .circle::after {
+      content: "";
+      position: absolute;
+      right: -8px;
+      top: -8px;
+      width: clamp(74px, 8vw, 120px);
+      aspect-ratio: 1/1;
+      border-radius: 50%;
+      box-shadow: inset 0 0 0 12px #18d28f, 0 10px 26px rgba(0, 0, 0, 0.1);
+      background: transparent;
+    }
+
+    /* my new css */
+    .form-abbive-img {
+      max-width: 170px;
+    }
+
+    .form-abbive-img img {
+      width: 100%;
+    }
+
+    .hero-wrap,
+    .hero-wrap .hero-sub {
+      transition: opacity 0.4s ease, visibility 0.4s ease, max-height 0.4s ease;
+    }
+
+    /* Hidden state (used on non-home pages) */
+    .hidden-hero {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .hero-wrap.hidden-hero {
+      display: none;
+    }
+
+    .hidden-hero-sub {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* brand slider */
+    .brand-slider .wrap {
+      background: white;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      border-radius: 0px;
+      padding: 40px 0;
+      gap: 2rem;
+      max-width: var(--wrap);
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .brand-fixed {
+      flex: 0 0 auto;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      opacity: 0.8;
+      line-height: 36px;
+      color: #000;
+      margin-right: 40px;
+      max-width: 360px;
+    }
+
+    .brand-marquee {
+      overflow: hidden;
+      position: relative;
+      flex: 1;
+    }
+
+    .brand-track {
+      display: flex;
+      align-items: center;
+      gap: 5rem;
+      width: max-content;
+      /* 🆕 ensures track width fits all logos inline */
+      animation: scroll 60s linear infinite;
+      white-space: nowrap;
+      will-change: transform;
+      /* 🆕 smoother GPU animation */
+    }
+
+
+    .brand-track img {
+      height: 120px;
+      width: auto;
+      opacity: 0.9;
+      object-fit: contain;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+
+    @keyframes scroll {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Responsive tweaks */
+
+    /* Tablets (≤ 992px) */
+    @media (max-width: 992px) {
+      .brand-slider .wrap {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1.5rem;
+      }
+
+      .brand-fixed {
+        font-size: 20px;
+        max-width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+        line-height: 1.4;
+      }
+
+      .brand-track {
+        gap: 3rem;
+        animation-duration: 18s;
+      }
+
+      .brand-track img {
+        height: 40px;
+        width: auto;
+        max-width: 90px;
+      }
+    }
+
+    /* Mobile (≤ 600px) */
+    @media (max-width: 600px) {
+      .brand-slider {
+        padding: 30px 0;
+      }
+
+      .brand-fixed {
+        font-size: 18px;
+        line-height: 1.3;
+      }
+
+      .brand-track {
+        gap: 2rem;
+        animation-duration: 15s;
+      }
+
+      .brand-track img {
+        height: 28px;
+        width: auto;
+        max-width: 70px;
+      }
+    }
+
+    /* Very small phones (≤ 400px) */
+    @media (max-width: 400px) {
+      .brand-fixed {
+        font-size: 16px;
+      }
+
+      .brand-track img {
+        height: 40px;
+        width: auto;
+        max-width: 60px;
+      }
+    }
+
+
+
+    /* my end css */
+    @media (max-width: 980px) {
+
+      .why-row,
+      .why-row.reverse {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .why-what .circle {
+        width: min(520px, 86vw);
+      }
+    }
+
+    /* 3) THREE CARDS — restored */
+    .why-cards {
+      background: #fff;
+      padding: clamp(40px, 7vw, 90px) 20px;
+    }
+
+    .why-cards .wrap {
+      max-width: min(1200px, 92vw);
+      margin: 0 auto;
+    }
+
+    .why-cards h3 {
+      margin: 0 0 22px;
+      text-align: center;
+      color: #0f3a2e;
+      font-weight: 900;
+      font-size: clamp(28px, 4.5vw, 56px);
+    }
+
+    .card-grid {
+      display: grid;
+      gap: clamp(18px, 2vw, 28px);
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media (max-width: 980px) {
+      .why-what .wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .feature-card {
+      background: #fff;
+      border: 1px solid #e6eeea;
+      border-radius: 28px;
+      padding: clamp(24px, 2.2vw, 32px);
+      text-align: center;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03),
+        0 14px 26px rgba(10, 20, 30, 0.06);
+    }
+
+    .feature-card .ico {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 6px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(180deg, #e7fff5, #d7f7ee);
+      color: #0f7a5a;
+      font-size: 34px;
+    }
+
+    .feature-card h4 {
+      margin: 8px 0 6px;
+      color: #0e3b31;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.01em;
+    }
+
+    .feature-card .sub {
+      margin: 0 0 12px;
+      color: #39c6a2;
+      font-weight: 900;
+    }
+
+    .feature-card p {
+      margin: 0;
+      color: #334148;
+      line-height: 1.7;
+    }
+
+    /* 4) CULTURE GRADIENT BANNER — restored */
+    .why-culture {
+      color: #0d2830;
+      text-align: center;
+      padding: clamp(56px, 9vw, 120px) 20px;
+      background: linear-gradient(90deg, #9ae6ff, #7cf2cc);
+    }
+
+    .why-culture h3 {
+      margin: 0 0 14px;
+      font-weight: 900;
+      font-size: clamp(28px, 4.8vw, 52px);
+      color: #0f3a2e;
+    }
+
+    .why-culture p {
+      margin: 0 auto 20px;
+      max-width: 90ch;
+      font-size: clamp(16px, 1.5vw, 19px);
+      line-height: 1.75;
+      color: #073524;
+      opacity: 0.9;
+    }
+
+    .why-culture .cta {
+      border-color: #0f3a2e;
+      color: #0f3a2e;
+    }
+
+    .why-culture .cta:hover {
+      border-color: #063f2e;
+      color: #063f2e;
+    }
+
+    /* 5) KPI STRIP */
+    .why-kpi {
+      color: #cffff1;
+      background: linear-gradient(180deg,
+          rgba(0, 0, 0, 0.25),
+          rgba(0, 0, 0, 0.25)),
+        radial-gradient(1200px 600px at 20% 10%,
+          rgba(255, 255, 255, 0.08),
+          transparent 60%),
+        #0c3b35;
+      padding: clamp(42px, 7vw, 90px) 20px;
+    }
+
+    .why-kpi .wrap {
+      max-width: var(--hero-wrap);
+      margin: 0 auto;
+    }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 30px;
+    }
+
+    /* KPI reveal + number animation */
+    .kpi-row {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 420ms ease, transform 420ms ease;
+    }
+
+    .kpi-row.in {
+      opacity: 1;
+      transform: none;
+    }
+
+    .kpi-left {
+      font-size: clamp(20px, 2.6vw, 36px);
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      color: #8af0c8;
+      text-transform: uppercase;
+    }
+
+    .kpi-right {
+      display: flex;
+      align-items: baseline;
+      gap: 18px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .kpi-num {
+      font-weight: 900;
+      font-size: clamp(48px, 8.5vw, 140px);
+      color: #75f2be;
+      line-height: 1;
+    }
+
+    .kpi-text {
+      font-weight: 900;
+      font-size: clamp(20px, 3.2vw, 44px);
+      color: #9bf2cc;
+      text-transform: uppercase;
+    }
+
+    .kpi-underline {
+      margin-top: 14px;
+      height: 6px;
+      width: 100%;
+      background: linear-gradient(90deg, #4aa679 0 40%, #efefef 40% 100%);
+      border-radius: 999px;
+    }
+
+    @media (max-width: 900px) {
+      .kpi-row {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .kpi-right {
+        justify-content: center;
+      }
+    }
+
+
+    /* Global coherence */
+    html,
+    body,
+    .site-header,
+    .nav,
+    .view,
+    .view * {
+      font-family: var(--inter) !important;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-weight: 900;
+      letter-spacing: 0.01em;
+    }
+
+    .center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin: 0 auto;
+      padding-inline: 12px;
+    }
+
+    /* Small-screen tweaks */
+    @media (max-width: 980px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding: clamp(18px, 6vw, 36px) 18px;
+        gap: clamp(12px, 6vw, 28px);
+      }
+
+      .hero-core {
+        grid-column: auto;
+        padding: 8px 6px;
+      }
+
+      .hero-core p {
+        font-size: clamp(15px, 3.6vw, 18px);
+        max-width: 48ch;
+      }
+    }
+
+    @media (max-width: 420px) {
+      :root {
+        --header-h: 60px;
+      }
+
+      .site-header {
+        height: var(--header-h);
+      }
+
+      .logo {
+        height: 40px;
+      }
+
+      .nav {
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .hero-side .big {
+        font-size: 35px;
+      }
+
+      .nav {
+        padding: 8px 12px;
+        gap: 8px;
+        justify-content: space-between;
+
+      }
+
+      .nav-links button {
+        padding: 8px 10px;
+        font-size: 13px;
+      }
+
+      .hero-sub p {
+        font-size: 16px;
+      }
+    }
+
+    /* Mobile nav panel */
+    .mobile-nav-panel {
+      display: none;
+      position: fixed;
+      inset: 0 0 0 0;
+      background: linear-gradient(180deg, rgba(6, 63, 46, 0.98), rgba(10, 38, 33, 0.98));
+      color: #fff;
+      z-index: 2000;
+      padding: 80px 20px 20px;
+      overflow-y: auto;
+    }
+
+    /* mobile panel is shown only via media rule */
+    .mobile-nav-panel.open {
+      display: none;
+    }
+
+    .mobile-nav-panel .mobile-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: stretch;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .mobile-nav-panel .mobile-links button {
+      text-align: left;
+      font-size: 20px;
+      padding: 14px 18px;
+      background: transparent;
+      border: 2px solid rgba(255, 255, 255, 0.06);
+      color: #fff;
+      border-radius: 12px;
+    }
+
+    .mobile-nav-close {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      background: transparent;
+      border: 0;
+      color: #fff;
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+    }
+
+    /* Show hamburger and hide inline nav-links at <=749px */
+    @media (max-width: 749px) {
+      .nav-toggle {
+        display: flex;
+        margin-left: 14px;
+        position: absolute;
+        right: 0%;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .mobile-nav-panel.open {
+        display: block;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .nav-toggle {
+        margin-left: 50px;
+      }
+
+      .brand .logo {
+        height: 40px;
+      }
+    }
+  
+/* ===== Consumer Insights intro (minimal styles) ===== */
+.ci-hero{
+  background:linear-gradient(180deg,rgba(7,29,24,.3),rgba(7,29,24,.6)),
+             url("https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=2000&auto=format&fit=crop") center/cover no-repeat;
+  color:#fff; padding:5rem 2rem; text-align:left; border-radius:1rem;
+}
+.ci-eyebrow{ text-transform:uppercase; font-weight:700; font-size:.8rem; letter-spacing:.05em; }
+.ci-title{ font-size:2.5rem; font-weight:800; margin:.5rem 0; }
+.ci-lede{ max-width:60ch; }
+.ci-build{ text-align:center; padding:3rem 2rem; }
+.ci-build h2{ font-size:2rem; font-weight:800; color:#0b2530; }
+.ci-cards{ display:grid; gap:1.5rem; padding:2rem; }
+@media(min-width:900px){ .ci-cards{ grid-template-columns:repeat(3,1fr); } }
+.ci-card{ background:#fff; border-radius:1rem; padding:1.5rem; box-shadow:0 2px 6px rgba(0,0,0,.06); text-align:center; }
+.ci-card h3{ margin-top:.5rem; font-weight:700; color:#0f2b22; }
+.ci-card p{ color:#334; }
+
+
+html, body {
+  font-family: "Inter", sans-serif !important;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--ink);
+}
+* {
+  font-family: inherit !important;
+}
+
+
+/* --- Match case-study pages to 'Why Us' palette & hide eyebrow --- */
+.case-title .eyebrow{ display:none !important; }
+
+/* Case hero overlay + spacing to echo .why-hero look */
+.case-hero{
+  position: relative;
+}
+.case-hero::after{
+  content:"";
+  position:absolute; inset:0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55));
+  pointer-events:none;
+}
+.case-hero .case-title{
+  position: absolute; left: clamp(20px, 5vw, 64px); bottom: clamp(28px, 7vw, 120px);
+  color:#fff;
+  max-width: min(900px, 92vw);
+  z-index:2;
+}
+.case-hero .bg{ filter: none; } /* keep image crisp; overlay handles contrast */
+
+/* Body styling to match Why Us soft-green area */
+.case-body{
+  background: #f5faf7;
+  padding: clamp(56px, 8vw, 100px) clamp(20px, 4vw, 28px);
+  display: grid;
+  gap: clamp(20px, 3vw, 32px);
+  grid-template-columns: 1.15fr 1fr;
+  border-top: 1px solid #e7efea;
+}
+@media (max-width: 900px){
+  .case-body{ grid-template-columns: 1fr; }
+}
+.case-box{
+  background:#fff;
+  border:1px solid #e7efea;
+  border-radius: 22px;
+  padding: clamp(18px, 2vw, 26px);
+  box-shadow: 0 8px 24px rgba(10,20,30,.08);
+  color:#223136;
+}
+.case-box h3{
+  margin: 0 0 8px;
+  color:#0b1f19;
+  font-weight:800;
+}
+.case-body .quote{
+  background:#fff;
+  border-left: 4px solid var(--green-500);
+  border-radius: 18px;
+  padding: 18px 20px;
+  box-shadow: 0 8px 24px rgba(10,20,30,.06);
+  color:#223136;
+}
+.case-body img{
+  border-radius: 14px;
+  border: 1px solid #e7efea;
+  box-shadow: 0 8px 24px rgba(10,20,30,0.08);
+  width:100%; height:100%; object-fit: cover;
+}
+
+
+/* --- Sleeker Navigation Bar --- */
+header nav a {
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: #ffffffcc;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  transition: all 0.25s ease;
+}
+
+header nav a:hover {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+header nav a.active {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.05) inset;
+}
+
+.logo strong {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+
+/* --- Add more air under 'Build strategies...' and unify fonts --- */
+.ci-build {
+  text-align: center;
+  padding: 6rem 2rem 5rem; /* increased bottom padding */
+  font-family: "Inter", sans-serif !important;
+}
+
+.ci-build h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #0b2530;
+  font-family: "Inter", sans-serif !important;
+}
+
+#cases h2 {
+  font-family: "Inter", sans-serif !important;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #0b2530;
+  margin-top: 3rem; /* add visual air between sections */
+  margin-bottom: 2rem;
+}
+
+
+/* --- Distinguish Build Strategies and Case Studies sections --- */
+.ci-build {
+  text-align: center;
+  padding: 6rem 2rem 6rem;
+  font-family: "Inter", sans-serif !important;
+  background: #f8fbfa;
+  background-image: radial-gradient(circle at 20% 20%, rgba(10, 98, 73, 0.04) 0 10px, transparent 11px),
+                    radial-gradient(circle at 80% 80%, rgba(10, 98, 73, 0.04) 0 10px, transparent 11px);
+  background-size: 140px 140px;
+}
+
+#cases h2 {
+  font-family: "Inter", sans-serif !important;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #0b2530;
+  margin-top: 5rem; /* more spacing above Case Studies */
+  margin-bottom: 3rem; /* more spacing below the heading before carousel */
+}
+
+
+/* Reserve consistent space for titles so the first paragraph always starts at the same Y */
+.cs-title{
+  display: flex;
+  align-items: flex-end;
+  min-height: 78px; /* ~3 lines at 20px * 1.3 line-height */
+  margin-bottom: 14px !important;
+}
+
+
+/* --- Stronger alignment for descriptions across cards --- */
+.cs-media{ height:220px !important; }
+.cs-media img{ width:100%; height:100%; object-fit:cover; display:block; border-radius:16px; }
+
+/* Reserve space for the longest title so paragraphs start at the same Y */
+.cs-title{
+  display:flex;
+  align-items:flex-end;
+  min-height: 120px !important; /* ~ up to 4 lines */
+  margin-bottom: 14px !important;
+}
+
+/* Normalize text margins below the title */
+.cs-text{ margin-top: 0 !important; }
+.cs-body{ gap: 16px !important; }
+
+
+/* --- Align titles and first paragraphs across all cards --- */
+/* Fix exact title block height so every description starts at the same Y */
+.cs-title{
+  height: 104px !important;   /* ~4 lines at current sizing */
+  min-height: 104px !important;
+  display:flex;
+  align-items:flex-end;
+  margin: 0 0 14px !important;
+}
+
+/* Ensure the first paragraph sits tight to that baseline */
+.cs-text{ margin-top: 0 !important; }
+
+
+/* --- Align first line of titles AND first line of paragraphs --- */
+/* Constant offset from image to text */
+.cs-body{ padding-top: 12px !important; gap: 16px !important; }
+/* Fix title block to exactly 2 lines; clamp overflow so paragraph baseline aligns */
+.cs-title{
+  margin: 0 0 14px !important;
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important;
+  overflow: hidden !important;
+  min-height: 72px !important;  /* ~2 lines at current sizing */
+}
+
+
+/* --- Fix: ensure only active tab content shows and prevent bleed --- */
+.view{ display:none !important; position:relative; z-index:0; }
+.view.active{ display:block !important; }
+.ci-build{ isolation:isolate; overflow:hidden; } /* keep full-bleed visuals contained */
+
+
+/* Cases landing hero (team doing insights work) */
+.cases-landing{
+  position: relative;
+  width: 100%;
+  min-height: 420px;
+  border-radius: 20px;
+  margin: 2rem auto 2.5rem;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.45)),
+    url("https://images.unsplash.com/photo-1556761175-129418cb2dfe?q=80&w=1920&auto=format&fit=crop") center/cover no-repeat;
+}
+.cases-landing-inner{
+  position: absolute; inset: 0;
+  display: grid; place-content: center;
+  text-align: center;
+  color: #fff;
+  padding: 2rem;
+}
+.cases-landing h1{ margin: 0 0 .5rem; font-size: clamp(32px, 6vw, 56px); font-weight: 800; }
+.cases-landing p{ margin: 0; font-size: clamp(14px, 1.6vw, 18px); opacity: .9; }
+
+
+/* --- Case Studies hero: match Why Us hero height and use healthcare research image --- */
+.cases-landing{
+  position: relative;
+  width: 100%;
+  min-height: min(70vh, 720px); /* match .why-hero height */
+  border-radius: 0;              /* full-bleed like other heroes */
+  margin: 0;                     /* remove extra margins */
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.28), rgba(0,0,0,.52)),
+    url("https://images.unsplash.com/photo-1586773860418-d37222d8fce3?q=80&w=2000&auto=format&fit=crop") center/cover no-repeat; /* healthcare research/team */
+}
+.cases-landing-inner{
+  position: absolute; inset: 0;
+  display: grid; place-content: center;
+  text-align: center;
+  color: #fff;
+  padding: 2rem;
+}
+.cases-landing h1{ margin: 0 0 .5rem; font-size: clamp(36px, 7vw, 72px); font-weight: 800; }
+.cases-landing p{ margin: 0; font-size: clamp(14px, 1.8vw, 20px); opacity: .92; }
+
+
+/* --- CASES LAYOUT FIX: no top white space, hero full-bleed, tight handoff to Build Strategies --- */
+
+.cases-landing{ margin:0 !important; border-radius:0 !important; }
+.cases-landing + .ci-build{ margin-top:0 !important; }
+.ci-build{ padding-top:4rem !important; } /* modest breathing room inside the section itself */
+
+/* keep hero height in line with other tabs */
+.cases-landing{ min-height: min(70vh, 720px) !important; }
+
+
+/* --- Eliminate gap between hero and Build Strategies --- */
+#cases{ background:none !important; background-image:none !important; }
+.cases-landing{ margin-bottom:0 !important; }
+.ci-build{ margin-top:0 !important; padding-top: 1.75rem !important; } /* small, intentional breathing room */
+#cases .wrap:first-child{ margin-top:0 !important; padding-top:0 !important; } /* guard against wrappers */
+
+
+/* ---- Case Studies hero (scoped) ---- */
+#cases.view.active { padding:0; margin:0; background:none; }
+#cases.view.active .cases-landing{
+  min-height: min(70vh, 720px);
+  margin: 0;
+  border-radius: 0;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.28), rgba(0,0,0,.52)),
+    url("https://images.unsplash.com/photo-1586773860418-d37222d8fce3?q=80&w=2000&auto=format&fit=crop")
+    center/cover no-repeat;
+}
+#cases.view.active .cases-landing-inner{
+  position: absolute; inset: 0; display: grid; place-content: center;
+  text-align: center; color: #fff; padding: 2rem;
+}
+#cases.view.active .cases-landing h1{ margin:0 0 .5rem; font-size: clamp(36px, 7vw, 72px); font-weight:800; }
+#cases.view.active .cases-landing p{ margin:0; font-size: clamp(14px, 1.8vw, 20px); opacity:.92; }
+/* remove any gap before the Build Strategies block */
+#cases.view.active .cases-landing + .ci-build{ margin-top:0; }
+#cases.view.active .ci-build{ padding-top:1.75rem; }
+
+/* ================= REPAIR PATCH ================= */
+
+/* 1) Keep SPA views isolated */
+.view { display: none !important; }
+.view.active { display: block !important; }
+
+/* 2) Hero: already full-bleed and correct; keep no-gap handoff */
+#cases.view.active .cases-landing + .ci-build{ margin-top:0; }
+
+/* 3) Build strategies section should be full-width with centered content */
+.ci-build{
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 6rem 2rem !important;
+  background: linear-gradient(180deg,#f4faf7 0%, #f6fbf9 100%);
+}
+/* Center all direct children to a comfortable content width */
+.ci-build > *{
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+/* 4) Center the 'Featured Case Studies' heading and give space */
+#cases h2{
+  max-width: 1100px;
+  margin: 3rem auto 2.5rem !important;
+  text-align: center;
+}
+
+/* 5) Carousel at 2/3 width, centered; but don't affect other blocks */
+#cases .cs-carousel{
+  width: 66%;
+  max-width: 1200px;
+  margin: 0 auto 4rem;
+}
+
+/* 6) Cards: consistent media, aligned titles & first paragraph */
+.cs-card{ display:flex; flex-direction:column; border-radius:18px; }
+.cs-media{ height: 220px !important; }
+.cs-media img{ width:100%; height:100%; object-fit:cover; border-radius:16px; display:block; }
+.cs-body{ display:flex; flex-direction:column; gap:14px; padding: 1rem 1.1rem; }
+.cs-title{ margin:0 0 8px !important; min-height: 96px; display:flex; align-items:flex-end; }
+.cs-text{ margin-top:0 !important; }
+
+/* 7) Hide dates in cards */
+.cs-date{ display:none !important; }
+
+/* 8) Prevent any accidental width inheritance on ci-build from earlier styles */
+#cases .ci-build{ width: auto !important; }
+
+
+/* ===== PATCH: unify hero title look, allow wrap, fix images, and center headings ===== */
+/* Center titles in the three section heroes and match heavy "Case Studies" look */
+.services-hero .inner,
+.case-study-hero .inner,
+.why-hero .inner{
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.services-title,
+.case-study-title,
+.why-eyebrow{
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.05 !important;
+  margin: 0 0 10px !important;
+  font-size: clamp(36px, 6.2vw, 72px) !important; /* close to Case Studies sizing */
+  word-break: normal !important;
+  overflow-wrap: anywhere !important; /* allow wrap */
+}
+
+/* If there are subtitles immediately under the titles */
+.services-sub,
+.case-study-sub,
+.why-sub{
+  max-width: 62ch;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Fix "tiny tall" images by enforcing a consistent media height and cover behavior */
+.card img,
+.tile img,
+.column-item img,
+.grid-wwd img{
+  width: 100% !important;
+  height: 220px !important;
+  object-fit: cover !important;
+  display: block !important;
+  border-radius: 12px !important;
+}
+
+/* Case studies card media normalization (safe duplicate to ensure enforcement) */
+.cs-media{ height: 220px !important; }
+.cs-media img{ width:100% !important; height:100% !important; object-fit: cover !important; display:block !important; border-radius:16px !important; }
+
+/* Align card bodies to start and keep buttons/links at the bottom if present */
+.card, .tile, .column-item{ display:flex; flex-direction:column; height:100%; }
+.card .body, .tile .body, .column-item .body{ display:flex; flex-direction:column; gap:10px; }
+.card .spacer, .tile .spacer, .column-item .spacer{ margin-top:auto; }
+
+/* ===== PATCH: ensure vertical centering for hero text ===== */
+.services-hero,
+.case-study-hero,
+.why-hero{
+  display: flex !important;
+  align-items: center !important;   /* vertical center */
+  justify-content: center !important; /* horizontal center */
+  text-align: center !important;
+  flex-direction: column !important;
+}
+
+/* ===== Case Studies intro panels ===== */
+.cs-intro-panels{
+  padding: 20px 0 0;
+}
+.cs-panels{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 28px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 6vw 20px;
+}
+.cs-panel{
+  background: #fff;
+  border: 1px solid rgba(14,15,16,0.08);
+  border-radius: 28px;
+  padding: 28px 26px 26px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  text-align: center;
+}
+.cs-panel-icon{
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 14px;
+  font-size: 28px;
+  background: rgba(18,163,122,0.08); /* echo brand green softly */
+}
+.cs-panel-title{
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  font-size: clamp(16px, 2.3vw, 20px);
+  line-height: 1.25;
+  margin: 4px 0 10px;
+  color: #0b1f19; /* deep green ink */
+}
+.cs-panel-text{
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.45;
+  color: #334;
+}
+@media (max-width: 1024px){
+  .cs-panels{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 680px){
+  .cs-panels{ grid-template-columns: 1fr; }
+}
+
+/* ===== Smaller text inside case study boxes ===== */
+.cs-panel-text{
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+  color: #334 !important;
+}
+
+/* ===== UNIFY HERO TYPOGRAPHY TO MATCH "CASE STUDIES" ===== */
+/* Center all hero inners exactly */
+.services-hero .inner,
+.case-study-hero .inner,
+.why-hero .inner{
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  display: grid !important;
+  gap: 12px !important;
+  justify-items: center !important;
+}
+
+/* Titles: copy Case Studies look (weight/size/line-height/spacing) */
+.services-title,
+.why-eyebrow,
+.case-study-title{
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif !important;
+  font-weight: 900 !important;
+  line-height: 1.04 !important;
+  letter-spacing: normal !important; /* remove extra tracking on Why */
+  font-size: clamp(40px, 7vw, 86px) !important; /* exact as case-study-title */
+  text-wrap: balance !important;
+  margin: 0 0 10px !important;
+}
+
+/* Subtitles under the heroes: match Case Studies style */
+.services-sub,
+.case-study-sub,
+.why-sub{
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif !important;
+  font-weight: 400 !important;
+  font-size: clamp(16px, 1.6vw, 20px) !important; /* same as case-study-sub */
+  line-height: 1.5 !important;
+  opacity: 0.95 !important;
+  max-width: 62ch !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+}
+
+/* ===== HERO TITLES UNIFIED EXACTLY TO "CASE STUDIES" ===== */
+.services-title,
+.why-eyebrow,
+.case-study-title{
+  font-size: clamp(44px, 6vw, 80px) !important; /* same size for all */
+  font-weight: 900 !important;
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif !important;
+  line-height: 1.05 !important;
+  letter-spacing: -0.02em !important;
+  text-align: center !important;
+  margin: 0 0 10px !important;
+}
+
+/* ===== FORCE IDENTICAL HERO TITLE SIZE (STRICT) ===== */
+/* Target multiple possible structures/classes/IDs with high specificity */
+.services-hero h1,
+.case-study-hero h1,
+.why-hero h1,
+#what-we-do .hero h1,
+#case-studies .hero h1,
+#why-us .hero h1,
+.services-title,
+.case-study-title,
+.why-eyebrow{
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif !important;
+  font-weight: 900 !important;
+  font-size: clamp(44px, 6vw, 80px) !important;  /* EXACT same scale */
+  line-height: 1.05 !important;
+  letter-spacing: -0.02em !important;
+  text-align: center !important;
+  margin: 0 0 10px !important;
+  transform: none !important;
+}
+
+/* Prevent any ancestor scaling or text-transform quirks */
+.services-hero .inner,
+.case-study-hero .inner,
+.why-hero .inner,
+#what-we-do .hero .inner,
+#case-studies .hero .inner,
+#why-us .hero .inner{
+  transform: none !important;
+  text-transform: none !important;
+}
+
+/* Unify subtitle too, matching Case Studies */
+.services-hero p,
+.case-study-hero p,
+.why-hero p,
+#what-we-do .hero p,
+#case-studies .hero p,
+#why-us .hero p{
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif !important;
+  font-weight: 400 !important;
+  font-size: clamp(16px, 1.6vw, 20px) !important;
+  line-height: 1.5 !important;
+  opacity: 0.95 !important;
+  max-width: 62ch !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+}
+
+/* ===== LOCK HERO TITLE TO FIXED PIXEL SIZE (MATCH CASE STUDIES EXACTLY) ===== */
+.services-hero h1,
+.case-study-hero h1,
+.why-hero h1,
+#what-we-do .hero h1,
+#case-studies .hero h1,
+#why-us .hero h1,
+.services-title,
+.case-study-title,
+.why-eyebrow{
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif !important;
+  font-weight: 900 !important;
+  font-size: 76px !important; /* FIXED pixel size identical to Case Studies */
+  line-height: 1.05 !important;
+  letter-spacing: -0.02em !important;
+  text-align: center !important;
+  margin: 0 0 10px !important;
+  transform: none !important;
+  text-transform: none !important;
+}
+
+/* Unify subtitle below hero headings */
+.services-hero p,
+.case-study-hero p,
+.why-hero p,
+#what-we-do .hero p,
+#case-studies .hero p,
+#why-us .hero p{
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 20px !important; /* consistent subtitle */
+  line-height: 1.5 !important;
+  opacity: 0.95 !important;
+  max-width: 62ch !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+}
+
+/* ===== Bottom CTA + Form (reusable) ===== */
+.tab-cta-wrap{
+  background: var(--green-800, #0b1f19);
+  color: #fff;
+  padding: clamp(32px, 6vw, 72px) 6vw;
+}
+.tab-cta{
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.1fr 1.2fr;
+  gap: clamp(20px, 4vw, 36px);
+  align-items: start;
+}
+.tab-cta h2{
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 900;
+  font-size: clamp(24px, 3vw, 36px);
+  line-height: 1.15;
+  margin: 0 0 16px;
+}
+.tab-cta .lead p{
+  margin: 0 0 16px;
+  font-size: clamp(14px, 1.5vw, 18px);
+  color: rgba(255,255,255,0.92);
+}
+.tab-cta .lead strong{
+  color: #fff;
+}
+.cta-form{
+  display: grid;
+  gap: 14px;
+}
+.cta-form .row{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.cta-form label{
+  position: relative;
+  display: block;
+}
+.cta-form input, .cta-form select, .cta-form textarea{
+  width: 100%;
+  padding: 16px 18px;
+  border-radius: 999px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  background: #fff;
+  color: #0e0f10;
+}
+.cta-form textarea{
+  border-radius: 20px;
+  min-height: 110px;
+  resize: vertical;
+  padding: 14px 16px;
+}
+.cta-form button{
+  justify-self: end;
+  padding: 14px 22px;
+  border-radius: 999px;
+  border: none;
+  font-weight: 700;
+  background: var(--green-500, #12a37a);
+  color: #0b1f19;
+  cursor: pointer;
+}
+@media (max-width: 900px){
+  .tab-cta{ grid-template-columns: 1fr; }
+  .cta-form .row{ grid-template-columns: 1fr; }
+}
+
+
+.tab-cta-wrap,
+.tab-cta,
+.tab-cta h2,
+.tab-cta .lead p,
+.cta-form input,
+.cta-form select,
+.cta-form textarea,
+.cta-form button{
+  
+}
+
+
+
+
+/* ===== Bottom CTA + Form (balanced sizing, per tab) ===== */
+.tab-cta-wrap{
+  background: var(--green-800, #0b1f19);
+  color: #fff;
+  padding: clamp(32px, 6vw, 72px) 6vw;
+}
+.tab-cta{
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.1fr 1.2fr;
+  gap: clamp(20px, 4vw, 36px);
+  align-items: start;
+}
+.tab-cta h2{
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 900;
+  font-size: clamp(24px, 2.2vw, 32px); /* ≈32px on desktop */
+  line-height: 1.15;
+  margin: 0 0 16px;
+}
+.tab-cta .lead p{
+  margin: 0 0 16px;
+  font-size: clamp(14px, 1.3vw, 16px); /* body ≈16px */
+  color: rgba(255,255,255,0.92);
+}
+.cta-form{ display:grid; gap:14px; }
+.cta-form .row{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.cta-form input, .cta-form select, .cta-form textarea{
+  width:100%; padding:16px 18px; border-radius:999px; border:none; outline:none;
+  font-size: 16px; background:#fff; color:#0e0f10;
+}
+.cta-form textarea{ border-radius:20px; min-height:110px; resize:vertical; padding:14px 16px; }
+.cta-form button{ justify-self:end; padding:14px 22px; border-radius:999px; border:none; font-weight:700; background:var(--green-500,#12a37a); color:#0b1f19; cursor:pointer; }
+@media (max-width:900px){ .tab-cta{ grid-template-columns:1fr; } .cta-form .row{ grid-template-columns:1fr; } }
+</style>
+
+<style>
+/* ===== CTA visibility: show on all tabs EXCEPT "Let's Talk" (#contact) ===== */
+#contact:target ~ .tab-cta-wrap { display: none !important; }
+</style><style>
+/* ===== Reduce CTA input width to 80% ===== */
+.tab-cta .cta-form input,
+.tab-cta .cta-form select,
+.tab-cta .cta-form textarea{
+  width: 80% !important;
+  justify-self: start;
+}
+.tab-cta .cta-form button{
+  width: auto !important;
+}
+</style><style>
+/* ===== CTA form fixes: compact height & hide duplicate labels ===== */
+
+/* Visually hide label text but keep for screen readers */
+.sr-only{
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  padding:0 !important;
+  margin:-1px !important;
+  overflow:hidden !important;
+  clip: rect(0,0,1px,1px) !important;
+  white-space:nowrap !important;
+  border:0 !important;
+}
+
+/* Restore full width of inputs (undo earlier 80%) */
+.tab-cta .cta-form input,
+.tab-cta .cta-form select,
+.tab-cta .cta-form textarea{
+  width: 100% !important;
+}
+
+/* Make fields ~20% shorter vertically */
+.tab-cta .cta-form input,
+.tab-cta .cta-form select{
+  padding: 13px 16px !important;   /* was 16px 18px */
+  border-radius: 28px !important;  /* keep pill look */
+}
+.tab-cta .cta-form textarea{
+  min-height: 88px !important;     /* was 110px */
+  padding: 12px 14px !important;
+  border-radius: 20px !important;
+}
+
+/* Keep button neat */
+.tab-cta .cta-form button{
+  padding: 12px 20px !important;
+}
+</style>
+<style>
+/* Hide CTA when the Let's Talk tab (#contact) is active */
+#contact:target ~ .cta-section { display: none !important; }
+</style>
+
+
+<style>
+/* Hide the CTA section when the "Let's Talk" tab (#contact) is active */
+#contact:target ~ .cta-section { display: none !important; }
+</style>
+
 </head>
-<body>
 
+<body>
   <!-- Header / Nav -->
   <header class="site-header" role="banner">
     <nav class="nav" aria-label="Primary">
       <a class="brand" href="#home" data-link="home" onclick="navigate('home')">
         <img class="logo" alt="Third Space Research"
-             src="https://images.squarespace-cdn.com/content/v1/63dbd7caaf346a420a8eac68/4bdc26df-da80-4edb-85ad-6ce302b79866/ThirdSpaceResearch-Logo-White.png?format=1500w">
-        <span class="sr-only">Third Space Research</span>
+          src="https://images.squarespace-cdn.com/content/v1/63dbd7caaf346a420a8eac68/4bdc26df-da80-4edb-85ad-6ce302b79866/ThirdSpaceResearch-Logo-White.png?format=1500w" />
       </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu" id="navToggle">
+        <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true">
+          <rect width="20" height="2" rx="1" fill="currentColor"></rect>
+          <rect y="6" width="20" height="2" rx="1" fill="currentColor"></rect>
+          <rect y="12" width="20" height="2" rx="1" fill="currentColor"></rect>
+        </svg>
+      </button>
       <div class="nav-links" role="tablist" aria-label="Sections">
-        <button role="tab" aria-controls="home"      aria-selected="true"  aria-current="page" data-link="home" onclick="navigate('home')">Home</button>
-        <button role="tab" aria-controls="team"      aria-selected="false" data-link="team" onclick="navigate('team')">The Team</button>
-        <button role="tab" aria-controls="services"  aria-selected="false" data-link="services" onclick="navigate('services')">What We Do</button>
-        <button role="tab" aria-controls="cases"     aria-selected="false" data-link="cases" onclick="navigate('cases')">Case Studies</button>
-        <button role="tab" aria-controls="why"       aria-selected="false" data-link="why" onclick="navigate('why')">Why Us</button>
-        <button role="tab" aria-controls="contact"   aria-selected="false" data-link="contact" onclick="navigate('contact')">Let’s Talk</button>
+        <button role="tab" aria-controls="home" aria-selected="true" aria-current="page" data-link="home"
+          onclick="navigate('home')">
+          HOME
+        </button>
+        <button role="tab" aria-controls="services" aria-selected="false" data-link="services"
+          onclick="navigate('services')">
+          WHAT WE DO
+        </button>
+        <button role="tab" aria-controls="cases" aria-selected="false" data-link="cases" onclick="navigate('cases')">
+          CASE STUDIES
+        </button>
+        <button role="tab" aria-controls="why" aria-selected="false" data-link="why" onclick="navigate('why')">
+          WHY US
+        </button>
+        <button role="tab" aria-controls="contact" aria-selected="false" data-link="contact"
+          onclick="navigate('contact')">
+          LET'S TALK
+        </button>
       </div>
     </nav>
   </header>
 
-  <!-- Home -->
-  <main id="home" class="view active" role="tabpanel" aria-labelledby="tab-home">
-    <div class="container">
-      <span class="pill">Healthcare & Life Sciences • Evidence-Based Strategy</span>
-      <div class="hero">
-        <div>
-          <h1>Expert research strategy for healthcare & life sciences</h1>
-          <p class="lede">We help healthcare innovators make <b>evidence-based decisions</b>, validate opportunities, and launch products faster—combining <b>academic rigor</b> with <b>industry insight</b>.</p>
-          <div class="list">
-            <div class="item"><span class="dot"></span><div><b>Product & evidence strategy</b> — clarity from discovery through launch.</div></div>
-            <div class="item"><span class="dot"></span><div><b>Human-centered research</b> — patients, providers, and systems.</div></div>
-            <div class="item"><span class="dot"></span><div><b>Decision support</b> — from insights to action with measurable outcomes.</div></div>
-          </div>
-          <a class="btn-inline" href="#contact" onclick="navigate('contact')">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Book a consultation
-          </a>
-        </div>
-        <div class="card" aria-hidden="true" style="display:none"></div>
-      </div>
+  <!-- Mobile nav panel -->
+  <div id="mobile-nav" class="mobile-nav-panel" aria-hidden="true" role="dialog" aria-label="Mobile navigation">
+    <button class="mobile-nav-close" aria-label="Close menu" id="mobileNavClose">✕</button>
+    <nav class="mobile-links" aria-label="Mobile primary">
+      <button role="tab" data-link="home" onclick="navigate('home'); closeMobileNav()">HOME</button>
+      <button role="tab" data-link="services" onclick="navigate('services'); closeMobileNav()">WHAT WE DO</button>
+      <button role="tab" data-link="cases" onclick="navigate('cases'); closeMobileNav()">CASE STUDIES</button>
+      <button role="tab" data-link="why" onclick="navigate('why'); closeMobileNav()">WHY US</button>
+      <button role="tab" data-link="contact" onclick="navigate('contact'); closeMobileNav()">LET'S TALK</button>
+    </nav>
+  </div>
 
-      <!-- Logos row (clients helped) -->
-      <div class="logo-strip" aria-label="Selected clients">
-        <div class="logo-row" aria-hidden="false">
-          <svg role="img" aria-label="Novella Therapeutics" viewBox="0 0 300 40" preserveAspectRatio="xMidYMid meet">
-            <text x="0" y="28" font-size="26" font-family="Inter, Arial, sans-serif" font-weight="700">Novella Therapeutics</text>
-          </svg>
-          <svg role="img" aria-label="Synapse Health" viewBox="0 0 260 40" preserveAspectRatio="xMidYMid meet">
-            <text x="0" y="28" font-size="26" font-family="Inter, Arial, sans-serif" font-weight="700">Synapse Health</text>
-          </svg>
-          <svg role="img" aria-label="AstraLabs" viewBox="0 0 200 40" preserveAspectRatio="xMidYMid meet">
-            <text x="0" y="28" font-size="26" font-family="Inter, Arial, sans-serif" font-weight="700">AstraLabs</text>
-          </svg>
-          <svg role="img" aria-label="MediQuant" viewBox="0 0 220 40" preserveAspectRatio="xMidYMid meet">
-            <text x="0" y="28" font-size="26" font-family="Inter, Arial, sans-serif" font-weight="700">MediQuant</text>
-          </svg>
-          <svg role="img" aria-label="CareBridge" viewBox="0 0 210 40" preserveAspectRatio="xMidYMid meet">
-            <text x="0" y="28" font-size="26" font-family="Inter, Arial, sans-serif" font-weight="700">CareBridge</text>
-          </svg>
+  <!-- Dynamic hero section for each page -->
+  <section class="hero-wrap" aria-label="Hero">
+    <!-- Home Page Hero -->
+    <div class="center" id="home-hero">
+      <div class="hero">
+        <div class="hero-side">
+          <span class="kicker hover-accent">WHAT</span>
+          <span class="big hover-accent">DATA</span>
+          <span class="kicker hover-accent">SAYS</span>
+        </div>
+        <div class="hero-core">
+          <p class="hover-accent">TURNING INSIGHTS INTO ACTION IN HEALTHCARE &amp; LIFE SCIENCES</p>
+        </div>
+        <div class="hero-side">
+          <span class="kicker hover-accent">WHAT</span>
+          <span class="big hover-accent">ACTION</span>
+          <span class="kicker hover-accent">CAN DO</span>
         </div>
       </div>
     </div>
 
-    <!-- Persistent CTA footer strip -->
-    <section class="cta" aria-label="Contact strip">
-      <div class="wrap">
-        <h3 style="margin:0">Ready to move from insights to impact?</h3>
-        <div><a class="btn" href="#contact" onclick="navigate('contact')">Let’s Talk</a></div>
+    <!-- Services Page Hero -->
+    <div class="center" id="services-hero" style="display: none;">
+      <div class="hero">
+        <div class="hero-side">
+          <span class="kicker hover-accent">OUR</span>
+          <span class="big hover-accent">EXPERT</span>
+          <span class="kicker hover-accent">SERVICES</span>
+        </div>
+        <div class="hero-core">
+          <p class="hover-accent">DELIVERING TRANSFORMATIVE SOLUTIONS IN HEALTHCARE.</p>
+        </div>
+        <div class="hero-side">
+          <span class="kicker hover-accent">YOUR</span>
+          <span class="big hover-accent">SUCCESS</span>
+          <span class="kicker hover-accent">STORY</span>
+        </div>
       </div>
-    </section>
+    </div>
+
+    <!-- Case Studies Hero -->
+    <div class="center" id="cases-hero" style="display: none;">
+      <div class="hero">
+        <div class="hero-side">
+          <span class="kicker hover-accent">REAL</span>
+          <span class="big hover-accent">IMPACT</span>
+          <span class="kicker hover-accent">STORIES</span>
+        </div>
+        <div class="hero-core">
+          <p class="hover-accent">PROVEN RESULTS IN HEALTHCARE TRANSFORMATION.</p>
+        </div>
+        <div class="hero-side">
+          <span class="kicker hover-accent">CLIENT</span>
+          <span class="big hover-accent">SUCCESS</span>
+          <span class="kicker hover-accent">PROVEN</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Why Us Hero -->
+    <div class="center" id="why-hero" style="display: none;">
+      <div class="hero">
+        <div class="hero-side">
+          <span class="kicker hover-accent">WHY</span>
+          <span class="big hover-accent">CHOOSE</span>
+          <span class="kicker hover-accent">US</span>
+        </div>
+        <div class="hero-core">
+          <p class="hover-accent">EXCELLENCE IN HEALTHCARE RESEARCH &amp; STRATEGY.</p>
+        </div>
+        <div class="hero-side">
+          <span class="kicker hover-accent">YOUR</span>
+          <span class="big hover-accent">TRUSTED</span>
+          <span class="kicker hover-accent">PARTNER</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact/Let's Talk Hero -->
+    <div class="center" id="contact-hero" style="display: none;">
+      <div class="hero">
+        <div class="hero-side">
+          <span class="kicker hover-accent">START</span>
+          <span class="big hover-accent">YOUR</span>
+          <span class="kicker hover-accent">JOURNEY</span>
+        </div>
+        <div class="hero-core">
+          <p class="hover-accent">LET'S TRANSFORM HEALTHCARE TOGETHER.</p>
+        </div>
+        <div class="hero-side">
+          <span class="kicker hover-accent">BEGIN</span>
+          <span class="big hover-accent">TODAY</span>
+          <span class="kicker hover-accent">NOW</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-sub">
+      <p>Rich qualitative &amp; quantitative research, strategy, and decision-ready outputs — built on academic rigor
+        with industry pragmatism.</p>
+      <a class="btn-ghost" href="#contact" onclick="navigate('contact')">GET IN TOUCH</a>
+    </div>
+  </section>
+
+  <!-- HOME -->
+  <main id="home" class="view active" role="tabpanel" aria-labelledby="tab-home">
+    <div class="main">
+      <!-- hero removed (now global) -->
+
+
+      <!-- LOGO CIRCLES with hover quotes -->
+      <section class="logo-band" aria-label="Trusted by">
+        <div class="wrap">
+          <h3 class="logo-heading">
+            Trusted by leaders across life sciences, medtech, and digital health
+          </h3>
+          <div id="badgeRow" class="badge-row">
+            <div class="badge">
+              <img src="./Abbott.png" alt="Albertsons" />
+              <span class="badge-label"></span>
+              <div class="badge-quote">
+                “Third Space delivered clarity and confidence before we launched
+                our patient advisory board.”
+              </div>
+            </div>
+            <div class="badge">
+              <img src="./Jandj.png" alt="Unilever" />
+              <span class="badge-label"></span>
+              <div class="badge-quote">
+                “Their rigor and speed are unmatched — we relied on them for every
+                concept test.”
+              </div>
+            </div>
+            <div class="badge">
+              <img src="./Abbvie1.png" alt="3M" />
+              <span class="badge-label"></span>
+              <div class="badge-quote">
+                “Our team loved how seamlessly research translated into
+                actionable design.”
+              </div>
+            </div>
+            <div class="badge">
+              <img src="./Hims-Hers-Lockup-Final_(1).png" alt="McKinsey" />
+              <span class="badge-label"></span>
+              <div class="badge-quote">
+                “Third Space turned stakeholder chaos into a coherent policy
+                roadmap.”
+              </div>
+            </div>
+            <div class="badge">
+              <img src="./takeda.png" alt="Kraft Heinz" />
+              <span class="badge-label"></span>
+              <div class="badge-quote">
+                “Every data deliverable was easy to understand — thoughtful, crisp, and
+                strategic.”
+              </div>
+            </div>
+          </div>
+
+          <div id="logoSentinel" style="height: 1px"></div>
+        </div>
+      </section>
+
+      <!-- GLOBAL MAP -->
+      <section id="global-presence" class="map-section" aria-label="Global presence">
+        <div class="map-head">
+          <h2 class="map-title">
+            Just because we work globally doesn't mean we have to
+            act like it.
+          </h2>
+          <p class="map-copy">
+            Our multilingual team delivers insights from across the world.
+          </p>
+        </div>
+        <div class="map-grid">
+          <div class="map-card">
+            <!-- <div id="globalMap" role="region" aria-label="Global presence map"></div> -->
+            <img src="./download.png" alt="" srcset="">
+
+          </div>
+        </div>
+      </section>
+
+      <!-- new section university section -->
+      <section class="brand-slider">
+        <div class="wrap">
+          <div class="brand-fixed">
+            <span>Our team of PhD-trained researchers bring expertise at industry speed</span>
+          </div>
+
+          <div class="brand-marquee">
+            <div class="brand-track">
+              <img src="./logos/logo1.jpg" alt="logo" />
+              <img src="./logos/logo2.jpg" alt="logo" />
+              <img src="./logos/logo3.jpg" alt="logo" />
+              <img src="./logos/logo4.jpg" alt="logo" />
+              <img src="./logos/logo5.jpg" alt="logo" />
+              <img src="./logos/logo6.jpg" alt="logo" />
+              <img src="./logos/logo7.png" alt="logo" />
+              <img src="./logos/logo8.jpg" alt="logo" />
+              <img src="./logos/logo9.jpg" alt="logo" />
+              <!-- duplicate for smooth looping -->
+              <img src="./logos/logo1.jpg" alt="logo" />
+              <img src="./logos/logo2.jpg" alt="logo" />
+              <img src="./logos/logo3.jpg" alt="logo" />
+              <img src="./logos/logo4.jpg" alt="logo" />
+              <img src="./logos/logo5.jpg" alt="logo" />
+              <img src="./logos/logo6.jpg" alt="logo" />
+              <img src="./logos/logo7.png" alt="logo" />
+              <img src="./logos/logo8.jpg" alt="logo" />
+              <img src="./logos/logo9.jpg" alt="logo" />
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+
   </main>
 
-  <!-- Team -->
-  <section id="team" class="view" role="tabpanel" aria-labelledby="tab-team">
-    <div class="container">
-      <h2>The Team</h2>
-      <p class="muted" style="margin-top:-6px">Strategy-oriented research experts who operate at the intersection of industry and academia.</p>
-
-      <div class="grid auto" style="margin-top:18px">
-        <article class="card" aria-labelledby="moira-name">
-          <img class="avatar"
-               src="https://images.squarespace-cdn.com/content/v1/63dbd7caaf346a420a8eac68/ffd6aecb-0076-4872-8326-a6eea7d2195a/Kyweluk%2BHeadshot%2B1.jpg"
-               alt="Headshot of Moira Kyweluk" width="140" height="140">
-          <h3 id="moira-name" class="role">Moira Kyweluk, PhD, MPH</h3>
-          <p class="muted">Moira (she/her) is an anthropologist, public health expert, and insights researcher with 15+ years leading market research and human-centered design across patients, HCPs, and health systems. She delivers academically rigorous, evidence-backed strategy for pharma, healthcare, wellness, and digital health & technology.</p>
-        </article>
-
-        <article class="card" aria-labelledby="fashina-name">
-          <img class="avatar"
-               src="https://images.squarespace-cdn.com/content/v1/63dbd7caaf346a420a8eac68/842dc35c-585a-427c-91f5-44d752d7933d/1644975631872.jpg"
-               alt="Headshot of Fashina Aladé" width="140" height="140">
-          <h3 id="fashina-name" class="role">Fashina Aladé, PhD</h3>
-          <p class="muted">Shina (she/her) is a researcher & strategist specializing in education, learning sciences, and digital technologies. She designs learning-informed solutions for patient & provider education, risk minimization, and family/system education. PhD, Northwestern University; MA, Ohio State; BA, University of Pennsylvania.</p>
-        </article>
-
-        <article class="card" aria-labelledby="alison-name">
-          <img class="avatar"
-               src="https://via.placeholder.com/400x400.png?text=Alison+Brinson"
-               alt="Headshot of Alison Brinson" width="140" height="140">
-          <h3 id="alison-name" class="role">Alison Brinson, MSPH</h3>
-          <p class="muted">Alison (she/her/hers) is a mixed-methods researcher & insights specialist across qualitative and quantitative market research for healthcare delivery, health systems, and pharmaceutical products. She brings a UX lens to human-centered design for digital health and leads quant research & growth projects. MSPH, Johns Hopkins; BS, Northeastern.</p>
-        </article>
-      </div>
-    </div>
-
-    <section class="cta" aria-label="Contact strip">
-      <div class="wrap">
-        <h3 style="margin:0">Have a project in mind?</h3>
-        <div><a class="btn" href="#contact" onclick="navigate('contact')">Let’s Talk</a></div>
-      </div>
-    </section>
-  </section>
-
-  <!-- What We Do (improved, blobs removed, working details toggle) -->
+  <!-- WHAT WE DO -->
   <section id="services" class="view" role="tabpanel" aria-labelledby="tab-services">
-    <div class="container">
-      <h2>What We Do</h2>
-
-      <!-- Filter chips map 1:1 to the tiles below -->
-      <div class="filters" role="toolbar" aria-label="Filter services">
-        <button class="filter" aria-pressed="true"  data-filter="all"     onclick="filterServices('all')">All</button>
-        <button class="filter" aria-pressed="false" data-filter="discover" onclick="filterServices('discover')">Discovery & Insights</button>
-        <button class="filter" aria-pressed="false" data-filter="testing"  onclick="filterServices('testing')">Concept & Testing</button>
-        <button class="filter" aria-pressed="false" data-filter="evidence" onclick="filterServices('evidence')">Evidence & Strategy</button>
-        <button class="filter" aria-pressed="false" data-filter="launch"   onclick="filterServices('launch')">Enablement & Launch</button>
+    <!-- Hero (now top-left) -->
+    <header class="services-hero">
+      <div class="inner reveal">
+        <!-- <div class="services-eyebrow">Our Services</div> -->
+        <h1 class="services-title">Research & Strategy Solutions</h1>
+        <p class="services-sub">
+          Comprehensive insights and evidence-backed solutions for healthcare & life sciences
+        </p>
       </div>
+    </header>
 
-      <!-- Concise tiles (no top/bottom blobs) -->
-      <div class="grid auto" style="margin-top:10px">
+    <!-- Big statement -->
+    <section class="services-intro">
+      <div class="wrap reveal">
+        <h2>Let us bring new data and refresh existing evidence to solve complex problems and deliver value to your team. </h2>
+        <p>
+          Our team of PhD-trained research experts bring emerging, best-in-class academic research methods and thinking to industry, at speed. Simply, we make sense of new and existing data from statistical real world evidence to the nuances of fresh qualitative feedback.
+        </p>
+      </div>
+    
 
-        <article class="card service" data-service="discover">
-          <h3>Discovery &amp; Insights</h3>
-          <p class="muted">Understand needs, barriers, and adoption drivers across patients, HCPs, and systems.</p>
-          <ul class="muted">
-            <li>Qual &amp; quant studies</li>
-            <li>Landscape &amp; claims scans</li>
-            <li>Journey &amp; opportunity maps</li>
-          </ul>
-          <button class="reveal" type="button" aria-expanded="false" onclick="toggleDetails(this)">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-            More details
-          </button>
-          <div class="details" hidden>
-            Mixed-methods plans sized to your stage: quick pulses, deep dives, or hybrid designs to de-risk next bets.
-          </div>
+
+
+</section>
+
+    <!-- Grids -->
+    <div class="section reveal">
+      <h2>What we do</h2>
+      <div class="grid-wwd">
+        <article class="card">
+          <div class="icon">📊</div>
+          <h3>Meaningful Insights</h3>
+          <p>
+            Mixed-methods research surfacing needs, barriers, and adoption
+            drivers across patients, HCPs, payers, and systems.
+          </p>
         </article>
-
-        <article class="card service" data-service="testing">
+        <article class="card">
+          <div class="icon">🧪</div>
           <h3>Concept &amp; Prototype Testing</h3>
-          <p class="muted">De-risk value props, UX, and messaging before you scale.</p>
-          <ul class="muted">
-            <li>Concept &amp; message testing</li>
-            <li>Prototype &amp; usability</li>
-            <li>Positioning &amp; claims clarity</li>
-          </ul>
-          <button class="reveal" type="button" aria-expanded="false" onclick="toggleDetails(this)">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-            More details
-          </button>
-          <div class="details" hidden>
-            Test with target users, payers, and HCPs; quantify lift and surface friction to guide the next iteration.
-          </div>
+          <p>
+            De-risk value props, UX, and message clarity—before you scale.
+          </p>
         </article>
-
-        <article class="card service" data-service="evidence">
+        <article class="card">
+          <div class="icon">📚</div>
           <h3>Evidence &amp; Strategy</h3>
-          <p class="muted">Turn findings into clear choices and defensible plans.</p>
-          <ul class="muted">
-            <li>Evidence / claims strategy</li>
-            <li>Methodologically rigorous studies</li>
-            <li>Stakeholder alignment</li>
-          </ul>
-          <button class="reveal" type="button" aria-expanded="false" onclick="toggleDetails(this)">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-            More details
-          </button>
-          <div class="details" hidden>
-            From endpoints and study design to claims matrices and buy-in decks—built to stand up to scrutiny.
-          </div>
+          <p>
+            Rigorous study design builds decision frameworks
+            that stand up to scrutiny.
+          </p>
         </article>
-
-        <article class="card service" data-service="launch">
+        <article class="card">
+          <div class="icon">🚀</div>
           <h3>Enablement &amp; Launch</h3>
-          <p class="muted">Make insights land in the real world—measure, learn, iterate.</p>
-          <ul class="muted">
-            <li>Patient &amp; HCP education</li>
-            <li>Risk minimization support</li>
-            <li>Go-to-market guidance</li>
-          </ul>
-          <button class="reveal" type="button" aria-expanded="false" onclick="toggleDetails(this)">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-            More details
-          </button>
-          <div class="details" hidden>
-            Launch support that fits clinic realities: concise assets, measurement loops, and activation plans.
-          </div>
+          <p>
+            Impact doesn't end when reserach wraps. We pressure test against business
+            realities—measure, learn, iterate.
+          </p>
         </article>
-
       </div>
     </div>
 
-    <section class="cta" aria-label="Contact strip">
-      <div class="wrap">
-        <h3 style="margin:0">Let’s turn evidence into action.</h3>
-        <div><a class="btn" href="#contact" onclick="navigate('contact')">Let’s Talk</a></div>
+    <div class="section reveal">
+      <h2>How we do it</h2>
+      <div class="grid-wwd">
+        <article class="card">
+          <div class="icon">🎚️</div>
+          <h3>Get the answers you need</h3>
+          <p>
+            Turn data into direction. From initial healthcare provider listening tours to IRB-approved clinical research, we design
+            programs that capture responses that actually mean something.
+          </p>
+        </article>
+        <article class="card">
+          <div class="icon">📈</div>
+          <h3>Pull it all together</h3>
+          <p>
+            Bridge existing data and new discovery. We integrate insights across big data, surveys, interviews, and market dynamics to align evidence, illuminate strategy, and guide your next research and strategy moves.
+          </p>
+        </article>
+        <article class="card">
+          <div class="icon">👤</div>
+          <h3>See the stories in your data</h3>
+          <p>
+            Our deliverables turn the complex healthcare landscape into clear, actionable plans. From intuitive dashboards to precision analytics, we make sure everyone — from interns to executives, lab bench to boardroom — sees exactly what matters. 
+          </p>
+        </article>
+        <article class="card">
+          <div class="icon">↔️</div>
+          <h3>Working as one to co-create</h3>
+          <p>
+            Collaboration is at the core of how we work. We join forces with your internal team to tackle tough problems, ensuring our work continues to deliver long after our engagement wraps.
+          </p>
+        </article>
       </div>
-    </section>
+    </div>
+
   </section>
 
-  <!-- Case Studies -->
-  <section id="cases" class="view" role="tabpanel" aria-labelledby="tab-cases">
-    <div class="container">
-      <h2>Case Studies</h2>
-      <p class="muted" style="margin-top:-6px">A few examples of how we translate research into decisions and outcomes.</p>
+  <!-- CASE STUDIES LIST -->
+  <section id="cases" class="view" role="tabpanel" aria-labelledby="tab-cases"><div class="cases-landing">
+    <div class="cases-landing-inner">
+      <h1>Case Studies</h1>
+      <p>Real-world projects across research, strategy, and design.</p>
+    </div>
+  </div><!-- Case Studies landing hero -->
+  
 
-      <div class="grid auto" style="margin-top:18px">
-        <article class="card">
-          <div class="pill" aria-label="Biopharma">Biopharma • Rare Disease</div>
-          <h3 style="margin-top:10px">De-risking value proposition for a novel diagnostic</h3>
-          <p class="muted">A biopharma partner needed clarity on HCP adoption drivers for a first-in-class diagnostic. We combined expert interviews, payer landscape scans, and iterative message testing.</p>
-          <ul class="muted" style="margin:0 0 0 18px;">
-            <li><b>Challenge:</b> Unclear decision pathways across specialties</li>
-            <li><b>Approach:</b> Mixed-methods research + claims scan</li>
-            <li><b>Output:</b> Evidence-ready positioning & claims map</li>
-          </ul>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
-            <span class="pill">3× faster alignment</span><span class="pill">+28% intent to adopt</span>
-          </div>
-        </article>
 
-        <article class="card">
-          <div class="pill" aria-label="Digital Health">Digital Health • Behavior Change</div>
-          <h3 style="margin-top:10px">Improving onboarding to boost 90-day retention</h3>
-          <p class="muted">A chronic-care app saw early churn. We mapped patient journeys and tested onboarding concepts to reduce cognitive load and align expectations.</p>
-          <ul class="muted" style="margin:0 0 0 18px;">
-            <li><b>Challenge:</b> Low activation after day 7</li>
-            <li><b>Approach:</b> Journey mapping + prototype testing</li>
-            <li><b>Output:</b> Onboarding scripts & risk-minimization micro-content</li>
-          </ul>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
-            <span class="pill">+35% day-30 activation</span><span class="pill">+18 pts NPS</span>
-          </div>
-        </article>
+    <!-- Hero (now top-left) -->
+<div class="wrap">
+      <!-- <div class="inner reveal" style="margin-bottom: 40px;">
+          <div class="services-eyebrow">Our Impact</div>
+          <h1 class="services-title">Success Stories</h1>
+          <p class="services-sub">
+            Real-world examples of how we help organizations transform healthcare delivery and patient outcomes
+          </p>
+        </div> --><!-- ===== Consumer Insights intro (appears before the carousel) ===== -->
+<section class="ci-build">
+      <div class="wrap">
+        <h2>Build strategies that drive your business forward.</h2>
 
-        <article class="card">
-          <div class="pill" aria-label="MedTech">MedTech • Provider Workflow</div>
-          <h3 style="margin-top:10px">Positioning a device within crowded OR workflows</h3>
-          <p class="muted">We clarified use cases and operational barriers across surgeons, scrub techs, and hospital admin to shape GTM and training assets.</p>
-          <ul class="muted" style="margin:0 0 0 18px;">
-            <li><b>Challenge:</b> Competing priorities in the OR</li>
-            <li><b>Approach:</b> Contextual inquiry + claims clarity</li>
-            <li><b>Output:</b> Role-specific training + adoption playbook</li>
-          </ul>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
-            <span class="pill">−22% setup time</span><span class="pill">+40% trial-to-adopt</span>
-          </div>
-        </article>
 
-        <article class="card">
-          <div class="pill" aria-label="Payer & Systems">Payer & Systems • Education</div>
-          <h3 style="margin-top:10px">Risk minimization program that actually lands</h3>
-          <p class="muted">We designed plain-language education for patients & HCPs, aligning with regulatory guidance while fitting busy clinic reality.</p>
-          <ul class="muted" style="margin:0 0 0 18px;">
-            <li><b>Challenge:</b> Low comprehension of REMS materials</li>
-            <li><b>Approach:</b> Co-design + readability testing</li>
-            <li><b>Output:</b> Multi-channel, role-based materials</li>
-          </ul>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
-            <span class="pill">+42% correct recall</span><span class="pill">−30% support tickets</span>
+
+        <p>
+          From product innovation to gathering critical new market landscape data, let Third Space lead the reserach so you can focus on what matters most. 
+       
+        </p>
+      <section class="cs-intro-panels" aria-label="Case Studies overview panels">
+  <div class="cs-panels">
+    <article class="cs-panel">
+      <div class="cs-panel-icon" aria-hidden="true">↗︎</div>
+      <h3 class="cs-panel-title">Get the Full Picture of Your Category</h3>
+      <p class="cs-panel-text">
+        Benchmark a new product or brand performance against the competition and identify new growth opportunities and revenue generation directions. 
+      </p>
+    </article>
+
+    <article class="cs-panel">
+      <div class="cs-panel-icon" aria-hidden="true">💬</div>
+      <h3 class="cs-panel-title">See the Why and How</h3>
+      <p class="cs-panel-text">
+        Understand when, why, and how patients, healthare providers, and other crtiical stakeholders interact with a product, brand or category.
+      </p>
+    </article>
+
+    <article class="cs-panel">
+      <div class="cs-panel-icon" aria-hidden="true">🧪</div>
+      <h3 class="cs-panel-title">Execute Critical Research</h3>
+      <p class="cs-panel-text">
+        Get insights to analyze brand perception and equity on an individual, national, or internatioanl scale to measure and manage product performance.
+      </p>
+    </article>
+  </div>
+
+
+
+
+</section></div>
+    </section>
+<!-- ===== /Consumer Insights intro ===== -->
+
+
+      <h2 style="margin-top: 2rem; margin-bottom: 4.5rem">Featured Case Studies</h2>
+      
+
+    
+<div class="cs-carousel">
+        <button class="cs-prev" aria-label="Previous">‹</button>
+        <div class="cs-track-wrap">
+          <div class="cs-track">
+
+
+            <article class="cs-card">
+              <div class="cs-media">
+                <img src="./Pharma sample deliverable.png" alt="Child resting at home" />
+              </div>
+              <div class="cs-body">
+                <div class="cs-date">01.24.25</div>
+                <h3 class="cs-title">
+                 Remote Monitoring For Cardiac Care
+                </h3>
+                <p class="cs-text">
+                  We worked with our client to create a digital patient experience to track heart health using
+                  advanced digital tools and wearable technology.
+                </p>
+                <br>
+                <div class="cs-actions">
+                  <a style="margin-top: 22px;" class="chip-link" href="#case-diagnostics"
+                    onclick="navigate('case-diagnostics')">Learn more →</a>
+                </div>
+              </div>
+            </article>
+
+
+
+            <article class="cs-card">
+              <div class="cs-media">
+                <img
+                  src="https://raw.githubusercontent.com/moirakyweluk/thirdspaceresearch-site/refs/heads/main/case%20study%201%20autoinjector.png"
+                  alt="Auto-injector app" />
+              </div>
+              <div class="cs-body">
+                <div class="cs-date">12.04.24</div>
+                <h3 class="cs-title">
+                 Reimagining Risk Minimization Materials
+                </h3>
+                <p class="cs-text">
+                  Prototype and UX refinement for a digital self-injection
+                  companion app using insights from real patients living with IBD.
+                </p>
+                <br><br>
+                <div class="cs-actions">
+                  <a style="margin-top: 10px;" class="chip-link" href="#case-autoinjector"
+                    onclick="navigate('case-autoinjector')">Learn more →</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="cs-card">
+              <div class="cs-media">
+                <img src="./case_study/claim_dashboard.jpg"
+                  alt="Analytics" />
+              </div>
+              <div class="cs-body">
+                <div class="cs-date">10.18.24</div>
+                <h3 class="cs-title">
+                  Competitive Market Scan for Insurance Navigation
+           
+                </h3>
+                <p class="cs-text">
+                  Structured scan of 25+ companies with claims analytics (10M+
+                  lives) to define entry segment, positioning, and data-backed
+                  business case.
+                </p>
+                <br>
+                <div class="cs-actions">
+                  <a style="margin-top: 10px;" class="chip-link" href="#case-billing"
+                    onclick="navigate('case-billing')">Learn more →</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="cs-card">
+              <div class="cs-media">
+                <img src="./Risk Min picture.png" alt="Education materials" />
+              </div>
+              <div class="cs-body">
+                <div class="cs-date">08.07.24</div>
+                <h3 class="cs-title">
+                  Risk minimization program that actually lands
+                </h3>
+                <p class="cs-text">
+                  Plain-language education aligned with regulatory guidance and
+                  clinical reality.
+                </p>
+                <br><br><br>
+                <div class="cs-actions">
+                  <a style="margin-top: 20px;" class="chip-link" href="#case-risk-min"
+                    onclick="navigate('case-risk-min')">Learn more →</a>
+                </div>
+              </div>
+            </article>
+            <article class="cs-card">
+              <div class="cs-media">
+                <img src="./Claims form case study.png " alt="Child resting at home" />
+              </div>
+              <div class="cs-body">
+                <div class="cs-date">01.24.25</div>
+                <h3 class="cs-title">
+                  National Survey of GLP-1 Users
+                </h3>
+                <p class="cs-text">
+                  Collecting nationwide insights from GLP-1 medication users to
+                  better understand their experiences, outcomes, and overall impact on health and lifestyle
+                </p>
+                <br>
+                <div class="cs-actions">
+                  <a class="chip-link" href="#case-glp1" onclick="navigate('case-glp1')">Learn more →</a>
+                </div>
+              </div>
+            </article>
+
+
+            <article class="cs-card">
+              <div class="cs-media">
+                <img
+                  src="https://raw.githubusercontent.com/moirakyweluk/thirdspaceresearch-site/refs/heads/main/Boy%20in%20bed.png"
+                  alt="Child resting at home" />
+              </div>
+              <div class="cs-body">
+                <div class="cs-date">01.24.25</div>
+                <h3 class="cs-title">
+                  Designing for Pediatric Sleep Apnea
+                </h3>
+                <p class="cs-text">
+                  Creating a practical pathway for a new tool in pediatric sleep-apnea testing
+                  outside the sleep clinic—grounded in real-world needs from families,
+                  providers, and payers.
+                </p>
+                <div class="cs-actions" style="display: flex; align-items: center; gap: 15px;">
+                  <a class="chip-link" href="#case-diagnostics" onclick="navigate('case-diagnostics')"
+                    style="display: inline-flex; align-items: center; text-decoration: none; white-space: nowrap;">
+                    Learn more →
+                  </a>
+                  <!-- <img src="./images/Older adults.png" alt="" width="130px"> -->
+                </div>
+
+
+
+              </div>
+            </article>
+
+
           </div>
-        </article>
+        </div>
+        <button class="cs-next" aria-label="Next">›</button>
       </div>
     </div>
 
-    <section class="cta" aria-label="Contact strip">
-      <div class="wrap">
-        <h3 style="margin:0">Want a deeper dive on a specific problem?</h3>
-        <div><a class="btn" href="#contact" onclick="navigate('contact')">Let’s Talk</a></div>
-      </div>
-    </section>
   </section>
 
   <!-- WHY US -->
   <section id="why" class="view" role="tabpanel" aria-labelledby="tab-why">
-    <div class="container">
-      <h2>Why Third Space Research?</h2>
-      <div class="hero" style="margin-top:10px">
-        <div>
-          <ul class="muted" style="margin:0 0 0 18px;">
-            <li><strong>Dual-fluency:</strong> academic-grade methods + practical industry execution.</li>
-            <li><strong>Healthcare focus:</strong> depth across life sciences, medtech and digital health.</li>
-            <li><strong>Right-sized:</strong> pragmatic scoping that moves quickly without sacrificing rigor.</li>
-            <li><strong>Action-ready outputs:</strong> clear decisions, not just decks.</li>
+    <header class="why-hero">
+      <div class="inner reveal">
+        <h1 class="why-eyebrow">Why Choose Us</h1>
+        <p class="why-sub">
+          We drive real change in healthcare and life sciences — and nowhere else. Our PhD-trained team brings category depth, analytical rigor, and innovative research methods that elevate industry insights to a new level.
+        </p>
+        
+      </div>
+    </header>
+
+    <section class="why-what">
+      <div class="wrap reveal">
+        <div class="why-row">
+          <div class="circle">
+            <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1600&auto=format&fit=crop"
+              alt="Team at work" />
+          </div>
+          <div class="copy">
+            <h2>What we do.</h2>
+            <p>
+              We help organizations understand their customers and identify
+              growth opportunities. With more visibility across data sources,
+              we unlock more impact — connecting insights to action.
+            </p>
+          </div>
+        </div>
+
+        <div class="why-row">
+          <div class="copy">
+            <h2>How we do it.</h2>
+            <p>
+              We blend maverick research methods and human-centered design with new, proprietary data and advanced AI-driven
+              analytics to create real world-ready
+              outputs — fast, rigorous, and built to work now.
+            </p>
+          </div>
+          <div class="circle">
+            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1600&auto=format&fit=crop"
+              alt="Collaboration in workshop" />
+          </div>
+        </div>
+      </div>
+    
+
+
+
+</section>
+
+    <section class="why-cards">
+      <div class="wrap reveal">
+        <h3>What makes our work special?</h3>
+        <div class="card-grid">
+          <article class="feature-card">
+            <div class="ico">⚡️</div>
+            <h4>SPEED</h4>
+            <div class="sub">Because you need it now.</div>
+            <p>
+              Right-sized programs and modern ops mean answers land faster —
+              without trading away rigor.
+            </p>
+          </article>
+          <article class="feature-card">
+            <div class="ico">📏</div>
+            <h4>DEPTH</h4>
+            <div class="sub">Because the detail matters.</div>
+            <p>
+              From ethnography to claims analytics, we bring resolution others
+              miss — and the context to use it.
+            </p>
+          </article>
+          <article class="feature-card">
+            <div class="ico">🌐</div>
+            <h4>BREADTH</h4>
+            <div class="sub">Because stakeholders are everywhere.</div>
+            <p>
+              Patients, HCPs, payers, and systems — we connect the dots across
+              the ecosystem to drive adoption.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="why-culture">
+      <div class="reveal">
+        <h3>We are a team that wants hard problems.</h3>
+        <p>
+          Our people are our advantage. We encourage fresh methods and apporaches, we design and interate quickly, and we learn from everything we do. Let us help you reimagine what research can do. 
+        </p>
+        <a class="btn-outline cta" href="#contact" onclick="navigate('contact')">VIEW ROLES</a>
+      </div>
+    </section>
+
+    <section class="why-kpi">
+      <div class="wrap reveal">
+        <div class="kpi-row">
+          <div>
+            <div class="kpi-left">At-a-glance</div>
+            <div class="kpi-underline"></div>
+
+            <div class="kpi-num">94%</div>
+            <div class="kpi-text">of our clients partner with us again within 1 year</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- new section university section -->
+    <section class="brand-slider">
+      <div class="wrap">
+        <div class="brand-fixed">
+          <span>Our team of PhD-trained researchers bring expertise at industry speed</span>
+        </div>
+
+        <div class="brand-marquee">
+          <div class="brand-track">
+            <img src="./logos/logo1.jpg" alt="logo" />
+            <img src="./logos/logo2.jpg" alt="logo" />
+            <img src="./logos/logo3.jpg" alt="logo" />
+            <img src="./logos/logo4.jpg" alt="logo" />
+            <img src="./logos/logo5.jpg" alt="logo" />
+            <img src="./logos/logo6.jpg" alt="logo" />
+            <img src="./logos/logo7.png" alt="logo" />
+            <img src="./logos/logo8.jpg" alt="logo" />
+            <img src="./logos/logo9.jpg" alt="logo" />
+            <!-- duplicate for smooth looping -->
+            <img src="./logos/logo1.jpg" alt="logo" />
+            <img src="./logos/logo2.jpg" alt="logo" />
+            <img src="./logos/logo3.jpg" alt="logo" />
+            <img src="./logos/logo4.jpg" alt="logo" />
+            <img src="./logos/logo5.jpg" alt="logo" />
+            <img src="./logos/logo6.jpg" alt="logo" />
+            <img src="./logos/logo7.png" alt="logo" />
+            <img src="./logos/logo8.jpg" alt="logo" />
+            <img src="./logos/logo9.jpg" alt="logo" />
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+
+  </section>
+
+  <!-- CASE DETAIL: Diagnostics -->
+  <section id="case-diagnostics" class="view" role="tabpanel" aria-labelledby="tab-cases">
+    <div class="case-hero">
+      <img class="bg"
+        src="https://raw.githubusercontent.com/moirakyweluk/thirdspaceresearch-site/refs/heads/main/Boy%20in%20bed.png"
+        alt="" />
+      <div class="case-back">
+        <a href="#cases" onclick="navigate('cases')">← Back to Case Studies</a>
+      </div>
+      <div class="case-title">
+        <span class="eyebrow">Case Study</span>
+        <h1>Designing at-home diagnostics</h1>
+        <p>
+          Creating a practical pathway for pediatric sleep-apnea testing
+          outside the clinic—grounded in real-world needs from families,
+          providers, and payers.
+        </p>
+      </div>
+    </div>
+    <div class="case-body">
+      <div>
+        <div class="case-box">
+          <h3>What we heard</h3>
+          Stanford University's Fogarty Innovation Hub approached Third Space
+          for support on <strong>voice-of-the-customer research</strong> and
+          <strong>market landscape assessment</strong>, plus
+          <strong>3D concept testing</strong> for a new diagnostic device for
+          pediatric sleep apnea.
+        </div>
+        <div class="case-box">
+          <h3>How we delivered</h3>
+          Our team conducted
+          <strong>national in-home ethnographic research</strong> with parents
+          and children, then built the reimbursement roadmap with payers and
+          providers. Outputs included a <strong>product roadmap</strong>,
+          <strong>customer journey map</strong>, and
+          <strong>topline insights</strong> to guide go-to-market.
+        </div>
+        <div class="quote">
+          "For patients who are homeless or living in a hotel… As long as it's
+          simple, not a whole lot for parents to do… that would be good." —
+          Pediatric Primary Care Provider
+        </div>
+      </div>
+      <div>
+        <img src="./case_study/case_study.jpg" alt="Case study visual" style="
+              width: 100%;
+              height: 100%;
+              border-radius: 14px;
+              border: 1px solid #e7efea;
+              box-shadow: 0 8px 24px rgba(10, 20, 30, 0.08);
+            " />
+      </div>
+    </div>
+  </section>
+
+  <!-- CASE DETAIL: Billing -->
+  <section id="case-billing" class="view" role="tabpanel" aria-labelledby="tab-cases">
+    <div class="case-hero">
+      <img class="bg" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1600&auto=format&fit=crop"
+        alt="" />
+      <div class="case-back">
+        <a href="#cases" onclick="navigate('cases')">← Back to Case Studies</a>
+      </div>
+      <div class="case-title">
+        <span class="eyebrow">Case Study</span>
+        <h1>Digital health company — billing &amp; navigation</h1>
+        <p>
+          Market scan &amp; competitor exploration to define entry segment,
+          positioning, and a data-backed business case.
+        </p>
+      </div>
+    </div>
+    <div class="case-body">
+      <div>
+        <div class="case-box">
+          <h3>What we heard</h3>
+          A venture-backed company exploring U.S. billing &amp; navigation
+          needed to understand unmet needs, competitive landscape, and
+          real-world evidence to validate opportunities. They needed a clear
+          view of:
+          <ul>
+            <li>
+              Key competitors and white space in billing + patient navigation
+            </li>
+            <li>
+              Market pain points using quantitative evidence (e.g., denial
+              rates)
+            </li>
+            <li>Strategic options for product positioning and entry</li>
           </ul>
         </div>
-        <div>
-          <img src="https://via.placeholder.com/800x520.png?text=Workshop+%2F+Synthesis" alt="Workshop synthesizing insights" style="width:100%; border-radius:12px; display:block;">
+        <div class="case-box">
+          <h3>How we delivered</h3>
+          We ran a structured market scan of ~25 companies across RCM
+          platforms, API players, patient-navigation tools, and next-gen
+          billing startups—mapping integration depth, UX quality, and segment
+          focus. In parallel we analyzed
+          <strong>10M+ de-identified commercial &amp; CMS claims</strong>,
+          quantified denial rates by payer/procedure/geo (<strong>12–18% first-pass denials</strong>; &gt;50%
+          preventable), and benchmarked capabilities. <br /><br />
+          <strong>Outcome:</strong> Clear positioning, defined entry segment,
+          and a business case to guide MVP development and partnerships.
         </div>
       </div>
-
-      <div class="grid auto" style="margin-top:24px">
-        <div class="card" style="text-align:center">
-          <h3 style="margin:0">3×</h3>
-          <p class="muted" style="margin:6px 0 0">Faster validation cycles</p>
-        </div>
-        <div class="card" style="text-align:center">
-          <h3 style="margin:0">90%</h3>
-          <p class="muted" style="margin:6px 0 0">Stakeholder alignment</p>
-        </div>
-        <div class="card" style="text-align:center">
-          <h3 style="margin:0">100%</h3>
-          <p class="muted" style="margin:6px 0 0">Decision-ready outputs</p>
-        </div>
+      <div>
+        <img src="./case_study/claim_dashboard.jpg" alt="Billing visual"
+          style="width:100%; height:100%; object-fit:contain; border-radius:14px; border:1px solid #e7efea; box-shadow:0 8px 24px rgba(10,20,30,0.08);" />
       </div>
     </div>
-
-    <section class="cta" aria-label="Contact strip">
-      <div class="wrap">
-        <h3 style="margin:0">Have a project in mind?</h3>
-        <div><a class="btn" href="#contact" onclick="navigate('contact')">Let’s Talk</a></div>
-      </div>
-    </section>
   </section>
 
-  <!-- Contact -->
+  <!-- CASE DETAIL: Risk Minimization -->
+  <section id="case-risk-min" class="view" role="tabpanel" aria-labelledby="tab-cases">
+    <div class="case-hero">
+      <img class="bg"
+        src="https://raw.githubusercontent.com/moirakyweluk/thirdspaceresearch-site/refs/heads/main/Older%20adults.png"
+        alt="Older adults education" />
+      <div class="case-back">
+        <a href="#cases" onclick="navigate('cases')">← Back to Case Studies</a>
+      </div>
+      <div class="case-title">
+        <span class="eyebrow">Case Study</span>
+        <h1>Reimagining Risk Minimization Program </h1>
+        <p>
+          Plain-language education aligned with regulatory guidance and clinic reality.
+        </p>
+      </div>
+    </div>
+    <div class="case-body">
+      <div>
+        <div class="case-box">
+          <h3>What we heard</h3>
+          A global pharmaceutical company needed to develop a risk minimization program and materials that would resonate with
+          healthcare providers and patients while meeting regulatory requirements. The challenge was creating
+          educational materials that were both compliant and practical for real-world clinical settings.
+        </div>
+        <div class="case-box">
+          <h3>How we delivered</h3>
+          Our team conducted comprehensive stakeholder research with HCPs, patients, and regulatory experts to identify
+          key barriers and opportunities. We developed plain-language educational materials, provider training modules,
+          and patient-facing resources that integrated seamlessly into existing clinical workflows. All materials were
+          tested with target audiences and refined based on feedback.
+        </div>
+        <div class="quote">
+          "The materials felt like they were made for our practice—not just checking a regulatory box." — Primary Care
+          Physician
+        </div>
+      </div>
+      <div>
+        <img src="./case_study/rish_min.jpg" alt="Risk minimization program visual"
+          style="width: 100%; height: 100%; object-fit: contain; border-radius: 14px; border: 1px solid #e7efea; box-shadow: 0 8px 24px rgba(10, 20, 30, 0.08);" />
+      </div>
+    </div>
+  </section>
+
+  <!-- CASE DETAIL: GLP-1 Survey -->
+  <section id="case-glp1" class="view" role="tabpanel" aria-labelledby="tab-cases">
+    <div class="case-hero">
+      <img class="bg" src="./Claims form case study.png" alt="GLP-1 research" />
+      <div class="case-back">
+        <a href="#cases" onclick="navigate('cases')">← Back to Case Studies</a>
+      </div>
+      <div class="case-title">
+        <span class="eyebrow">Case Study</span>
+        <h1>National Survey of GLP-1 Users</h1>
+        <p>
+          Collecting comprehensive insights from individuals using GLP-1 medications to better understand their
+          experiences, outcomes, and overall impact on health and lifestyle.
+        </p>
+      </div>
+    </div>
+    <div class="case-body">
+      <div>
+        <div class="case-box">
+          <h3>What we heard</h3>
+          As GLP-1 medications gained widespread adoption for weight management and diabetes treatment, there was
+          limited real-world data on patient experiences, adherence patterns, and long-term outcomes. Stakeholders
+          needed comprehensive insights to inform product development, patient support programs, and clinical guidance.
+        </div>
+        <div class="case-box">
+          <h3>How we delivered</h3>
+          We designed and executed a national survey reaching thousands of GLP-1 users across diverse demographics and
+          geographic regions. Our research captured detailed information on treatment experiences, side effects,
+          lifestyle changes, healthcare interactions, and satisfaction levels. Findings were synthesized into actionable
+          insights with segmentation analysis to identify distinct user personas and their unique needs.
+        </div>
+        <div class="quote">
+          "This research gave us the patient voice we needed to reshape our support programs." — Digital Health Product
+          Manager
+        </div>
+      </div>
+      <div>
+        <img
+          src="./Claims form case study.png"
+          alt="Case study visual" />
+      </div>
+    </div>
+  </section>
+
+  <!-- CASE DETAIL: Cardiac Monitoring -->
+  <section id="case-cardiac" class="view" role="tabpanel" aria-labelledby="tab-cases">
+    <div class="case-hero">
+      <img class="bg"
+        src="https://raw.githubusercontent.com/moirakyweluk/thirdspaceresearch-site/refs/heads/main/StockCake.com-Digital%20Heartbeat%20Monitor.jpg"
+        alt="Cardiac monitoring technology" />
+      <div class="case-back">
+        <a href="#cases" onclick="navigate('cases')">← Back to Case Studies</a>
+      </div>
+      <div class="case-title">
+        <span class="eyebrow">Case Study</span>
+        <h1>Remote Monitoring for Cardiac Care</h1>
+        <p>
+          Enabling continuous tracking of patient heart health using advanced digital tools and wearable technology to
+          improve outcomes and reduce hospital readmissions.
+        </p>
+      </div>
+    </div>
+    <div class="case-body">
+      <div>
+        <div class="case-box">
+          <h3>What we heard</h3>
+          A medical device company developing remote cardiac monitoring solutions needed to understand patient and
+          provider needs, technical requirements, and reimbursement pathways. Key questions included: What clinical
+          scenarios benefit most from remote monitoring? What data matters to cardiologists? How can patients be engaged
+          in continuous monitoring?
+        </div>
+        <div class="case-box">
+          <h3>How we delivered</h3>
+          We conducted multi-stakeholder research including in-depth interviews with cardiologists, heart failure
+          patients, caregivers, and payers. Our analysis identified high-value use cases, essential data streams, and
+          integration requirements for EHR systems. We developed a go-to-market strategy with clear value propositions
+          for each stakeholder group and a roadmap for clinical validation studies to support reimbursement.
+        </div>
+        <div class="quote">
+          "The insights helped us prioritize features that actually matter to clinicians—not just what's technically
+          possible." — VP of Product Development
+        </div>
+      </div>
+      <div>
+        <img
+          src="https://raw.githubusercontent.com/moirakyweluk/thirdspaceresearch-site/refs/heads/main/StockCake.com-Digital%20Heartbeat%20Monitor.jpg "
+          alt="Cardiac monitoring in action" />
+      </div>
+    </div>
+  </section>
+
+  <!-- CASE DETAIL: Auto-injector -->
+  <section id="case-autoinjector" class="view" role="tabpanel" aria-labelledby="tab-cases">
+    <div class="case-hero">
+      <img class="bg"
+        src="https://raw.githubusercontent.com/moirakyweluk/thirdspaceresearch-site/refs/heads/main/case%20study%201%20autoinjector.png"
+        alt="Auto-injector app interface" />
+      <div class="case-back">
+        <a href="#cases" onclick="navigate('cases')">← Back to Case Studies</a>
+      </div>
+      <div class="case-title">
+        <span class="eyebrow">Case Study</span>
+        <h1>Guiding Self-injection for IBS</h1>
+        <p>
+          Prototype and UX refinement for a digital self-injection companion app using insights from real patients
+          living with IBD.
+        </p>
+      </div>
+    </div>
+    <div class="case-body">
+      <div>
+        <div class="case-box">
+          <h3>What we heard</h3>
+          A global pharmaceutical company was developing a digital companion app to support patients self-administering
+          a new biologic treatment. They needed to understand user needs, validate the UX, and ensure the app
+          effectively minimized injection-related risks.
+        </div>
+        <div class="case-box">
+          <h3>How we delivered</h3>
+          Our team conducted extensive user research with IBD patients, gathering insights on injection challenges,
+          workflow preferences, and support needs. We refined the app's interface through iterative testing, optimizing
+          the step-by-step guidance, reminders, and educational content. The result was an intuitive companion app that
+          improved injection confidence and adherence.
+        </div>
+        <div class="quote">
+          "The app makes me feel more confident about doing my injections correctly. It's like having a guide right
+          there with you." — IBD Patient
+        </div>
+      </div>
+      <div>
+        <img
+          src="https://raw.githubusercontent.com/moirakyweluk/thirdspaceresearch-site/refs/heads/main/case%20study%201%20autoinjector.png"
+          alt="Auto-injector app screens" />
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- LET'S TALK -->
   <section id="contact" class="view" role="tabpanel" aria-labelledby="tab-contact">
-    <div class="container">
-      <h2>Let’s Talk</h2>
-      <p class="muted">Tell us a bit about your product or challenge, and we’ll follow up with next steps.</p>
-
-      <div class="card">
-        <form action="https://formspree.io/f/your-endpoint" method="POST">
-          <label class="sr-only" for="name">Name</label>
-          <input id="name" name="name" type="text" placeholder="Your name" required
-                 style="width:100%;padding:12px 14px;margin:6px 0;border:1px solid #dbe5e8;border-radius:12px">
-
-          <label class="sr-only" for="email">Email</label>
-          <input id="email" name="email" type="email" placeholder="Your email" required
-                 style="width:100%;padding:12px 14px;margin:6px 0;border:1px solid #dbe5e8;border-radius:12px">
-
-          <label class="sr-only" for="message">Message</label>
-          <textarea id="message" name="message" rows="5" placeholder="How can we help?"
-                    style="width:100%;padding:12px 14px;margin:6px 0;border:1px solid #dbe5e8;border-radius:12px"></textarea>
-
-          <button type="submit"
-                  style="margin-top:6px; background:var(--green-600); color:#fff; font-weight:700; border:0; padding:12px 16px; border-radius:12px; cursor:pointer">
-            Send
-          </button>
-        </form>
+    <div class="contact-wrap">
+      <div class="contact-2col">
+        <div class="contact-copy">
+          <h1>Grow more with<br />modern insights.</h1>
+          <p class="sub">Sign up for your free demo now!</p>
+          <p class="quote">
+            “I think of the Numerator team as an extension of my team. They’re
+            always available, always strategic, and the data speaks for itself
+            in helping you get great insights.”
+          </p>
+          <p class="byline">– Mary Jane Campbell</p>
+          <div class="jj form-abbive-img">
+            <img src="./Abbvie.png" class="img-responsive" alt="Image">
+          </div>
+        </div>
+        <div class="form-card">
+          <form class="form-row" action="https://formspree.io/f/xyzlylgp"Thanks! We will be in touch.');" method="POST">
+              <input type="hidden" name="_subject" value="Website Inquiry from Third Space">
+  <input type="hidden" name="_template" value="table">
+<input class="field" name="work_email" type="email" placeholder="* Work Email" required />
+            <input class="field" name="first_name" type="text" placeholder="* First Name" required />
+            <input class="field" name="last_name" type="text" placeholder="* Last Name" required />
+            <input class="field" name="job_title" type="text" placeholder="* Job Title" required />
+            <input class="field" name="company" type="text" placeholder="* Company Name" required />
+            <input class="field" name="country" type="text" placeholder="Country" />
+            <textarea class="field field-tall" name="message"
+              placeholder="Tell us a bit about your product or challenge…"></textarea>
+            <div class="submit-row">
+              <button class="submit-btn" type="submit">SUBMIT</button>
+            </div>
+            <div class="contact-note">
+              We’ll never share your information.
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-
-    <section class="cta" aria-label="Contact strip">
-      <div class="wrap">
-        <h3 style="margin:0">Prefer email? hello@thirdspaceresearch.com</h3>
-        <div><a class="btn" href="mailto:hello@thirdspaceresearch.com">Email Us</a></div>
-      </div>
-    </section>
   </section>
 
-  <footer class="sr-only" aria-hidden="true">© Third Space Research</footer>
+
+  
+
+
+
+
+<section class="cta-section" style="background:#0b1f19;color:#fff;padding:60px 0;">
+  <div style="max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start;">
+    <div style="flex:1 1 40%;">
+      <h2 style="font-size:1.9rem;font-weight:800;margin:0 0 20px;">Get more with Third Space.</h2>
+      <h3 style="font-size:1rem;font-weight:700;margin:0 0 6px;">Drive innovation and growth...</h3>
+      <p style="margin:0 0 16px;">Use deep consumer and stakeholer understanding and bespoke strategic research to deliver fresh strategy. Our work spans category and brand-specific research, strategic policy initiatives, and market-defining explorations. </p>
+      <h3 style="font-size:1rem;font-weight:700;margin:0 0 6px;">...at every phase.</h3>
+      <p style="margin:0;">From emerging startups to established industry leaders, we guide healthcare and life sciences companies through every stage of product development. Whether you’re preparing for your next funding round, mapping the competitive landscape, building academic partnerships, or identifying the right patients and providers — we partner with you to deliver clarity, strategy, and measurable impact. </p>
+    </div>
+    <form action="https://formspree.io/f/xyzlylgp" method="POST"
+          style="flex:1 1 55%;display:flex;flex-direction:column;gap:14px;">
+      <input type="hidden" name="_subject" value="Website Inquiry from Third Space">
+      <input type="hidden" name="_template" value="table">
+      <input type="email" name="email" placeholder="* Work Email" required
+             style="padding:12px 16px;border-radius:20px;border:none;">
+      <div style="display:flex;gap:10px;">
+        <input name="first" placeholder="* First Name" required
+               style="flex:1;padding:12px 16px;border-radius:20px;border:none;">
+        <input name="last" placeholder="* Last Name" required
+               style="flex:1;padding:12px 16px;border-radius:20px;border:none;">
+      </div>
+      <div style="display:flex;gap:10px;">
+        <input name="title" placeholder="* Job Title" required
+               style="flex:1;padding:12px 16px;border-radius:20px;border:none;">
+        <input name="company" placeholder="* Company Name" required
+               style="flex:1;padding:12px 16px;border-radius:20px;border:none;">
+      </div>
+      <input name="country" placeholder="Country"
+             style="padding:12px 16px;border-radius:20px;border:none;">
+      <textarea name="message" placeholder="Tell us briefly about your project (optional)"
+                style="padding:12px 16px;border-radius:20px;border:none;min-height:100px;resize:vertical;"></textarea>
+      <button type="submit"
+              style="align-self:flex-end;background:#12a37a;color:#0b1f19;font-weight:700;border:none;border-radius:24px;padding:10px 28px;cursor:pointer;">
+        SUBMIT
+      </button>
+    </form>
+  </div>
+</section>
+
+<footer class="site-footer" role="contentinfo">
+    <div class="wrap">
+      <div class="small">
+        Third Space Research® — Registered in the United States
+      </div>
+      <div class="small">33 Irving Pl, New York, NY 10003 USA</div>
+      <div class="small">© <span id="year"></span> Third Space</div>
+    </div>
+  
+
+</footer>
 
   <script>
-    // Basic SPA section switcher so content only shows when its tab is clicked
-    const views = Array.from(document.querySelectorAll('.view'));
-    const tabs  = Array.from(document.querySelectorAll('.nav-links button'));
+    // --- SPA navigation base ---
+    const views = Array.from(document.querySelectorAll(".view"));
+    const tabs = Array.from(document.querySelectorAll(".nav-links button"));
 
-    function setActive(sectionId){
-      views.forEach(v => v.classList.toggle('active', v.id === sectionId));
-      tabs.forEach(t => {
+    function setActiveBase(sectionId) {
+  // Hide CTA only on the "Let's Talk" tab
+  try {
+    const cta = document.querySelector('.cta-section');
+    if (cta) cta.style.display = (sectionId === 'contact') ? 'none' : '';
+  } catch (e) {}
+      views.forEach((v) => v.classList.toggle("active", v.id === sectionId));
+      tabs.forEach((t) => {
         const on = t.dataset.link === sectionId;
-        t.setAttribute('aria-current', on ? 'page' : 'false');
-        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.setAttribute("aria-current", on ? "page" : "false");
+        t.setAttribute("aria-selected", on ? "true" : "false");
+      // --- CTA visibility control (hide on Let's Talk / #contact) ---
+      try {
+        const cta = document.querySelector('.cta-section');
+        if (cta) {
+          cta.style.display = (sectionId === 'contact') ? 'none' : '';
+        }
+      } catch (e) {}
+    
+});
+
+      // --- HERO logic ---
+      const heroWrap = document.querySelector('.hero-wrap');
+      const heroSub = heroWrap ? heroWrap.querySelector('.hero-sub') : null;
+
+      // Hide all hero variants
+      document.querySelectorAll('.center[id$="-hero"]').forEach(hero => {
+        hero.style.opacity = '0';
+        hero.style.visibility = 'hidden';
+        hero.style.pointerEvents = 'none';
+        hero.style.position = 'absolute';
       });
+
+      // Show current hero (or fallback to home-hero)
+      const currentHero = document.getElementById(sectionId + '-hero') || document.getElementById('home-hero');
+      if (currentHero) {
+        currentHero.style.opacity = '1';
+        currentHero.style.visibility = 'visible';
+        currentHero.style.pointerEvents = 'auto';
+        currentHero.style.position = 'relative';
+      }
+
+      // --- Only show hero-wrap & sub on home ---
+      if (sectionId === 'home') {
+        heroWrap.classList.remove('hidden-hero');
+        if (heroSub) heroSub.classList.remove('hidden-hero-sub');
+      } else {
+        heroWrap.classList.add('hidden-hero');
+        if (heroSub) heroSub.classList.add('hidden-hero-sub');
+      }
+
+      if (sectionId === "home") {
+        resetBadges();
+      }
+
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     }
 
-    function navigate(sectionId){
-      history.pushState(null, '', '#' + sectionId);
+
+    function navigate(sectionId) {
+      history.pushState(null, "", "#" + sectionId);
       setActive(sectionId);
-      // move focus to the section for a11y
-      const el = document.getElementById(sectionId);
-      if (el) el.setAttribute('tabindex', '-1'), el.focus({preventScroll:true});
     }
 
-    // Initial route
-    (function init(){
-      const target = (location.hash || '#home').slice(1);
-      setActive(target);
+    (function init() {
+      const target = (location.hash || "#home").slice(1);
+      setActiveBase(target);
     })();
 
-    window.addEventListener('hashchange', () => {
-      const target = (location.hash || '#home').slice(1);
+    window.addEventListener("hashchange", () => {
+      const target = (location.hash || "#home").slice(1);
       setActive(target);
     });
 
-    // --- What We Do helpers ---
-    function filterServices(key){
-      const tiles = document.querySelectorAll('.service');
-      const buttons = document.querySelectorAll('.filters .filter');
-      buttons.forEach(b => b.setAttribute('aria-pressed', b.dataset.filter === key ? 'true' : 'false'));
-      tiles.forEach(t => {
-        const show = (key === 'all') || (t.dataset.service === key);
-        t.style.display = show ? '' : 'none';
+    // --- Logo badges: animate on view ---
+    const badgeObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in");
+          } else {
+            entry.target.classList.remove("in");
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    function attachBadgeObserver() {
+      document
+        .querySelectorAll(".badge")
+        .forEach((b) => badgeObserver.observe(b));
+    }
+    attachBadgeObserver();
+
+    function resetBadges() {
+      document.querySelectorAll(".badge").forEach((b) => {
+        b.classList.remove("in");
+        void b.offsetWidth; // reflow
       });
     }
 
-    // Accessible details toggle (no hash changes)
-    function toggleDetails(btn){
-      const expanded = btn.getAttribute('aria-expanded') === 'true';
-      btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-      const details = btn.nextElementSibling;
-      if (!details) return;
-      if (details.hasAttribute('hidden')) {
-        details.removeAttribute('hidden');
-        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 15l6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Hide details';
-      } else {
-        details.setAttribute('hidden','');
-        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> More details';
+    // --- Reveal the map section ONCE after passing the sentinel ---
+    const sentinel = document.getElementById("logoSentinel");
+    const mapSection = document.getElementById("global-presence");
+    let revealed = false;
+
+    if (sentinel) {
+      const mapRevealObserver = new IntersectionObserver(
+        (entries, obs) => {
+          entries.forEach((entry) => {
+            if (!revealed && !entry.isIntersecting) {
+              mapSection.classList.add("visible");
+              revealed = true;
+              obs.disconnect();
+            }
+          });
+        },
+        { threshold: 0, rootMargin: "0px 0px -40% 0px" }
+      );
+
+      mapRevealObserver.observe(sentinel);
+
+      const initialCheck = () => {
+        const rect = sentinel.getBoundingClientRect();
+        if (rect.top < 0) {
+          mapSection.classList.add("visible");
+          revealed = true;
+          mapRevealObserver.disconnect();
+        }
+      };
+      window.addEventListener("load", initialCheck);
+      initialCheck();
+    }
+
+    // --- Section-specific reveal helpers ---
+    function observeReveals(selector) {
+      const els = document.querySelectorAll(selector);
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("in");
+              io.unobserve(e.target);
+            }
+          });
+        },
+        { threshold: 0.12, rootMargin: "0px 0px -10% 0px" }
+      );
+      els.forEach((el) => io.observe(el));
+    }
+
+    // Compose a single setActive that calls base + section hooks
+    function setActive(sectionId) {
+      setActiveBase(sectionId);
+      // Trigger hero fade-up animation on navigation
+      try {
+        const hero = document.querySelector('.hero-wrap');
+        if (hero) {
+          hero.classList.remove('fade-up');
+          // force reflow to restart animation
+          void hero.offsetWidth;
+          hero.classList.add('fade-up');
+        }
+      } catch (e) { /* ignore in older browsers */ }
+      if (sectionId === "services") {
+        observeReveals("#services .reveal");
+      }
+      if (sectionId === "why") {
+        observeReveals("#why .reveal");
+      }
+      if (sectionId === "cases") {
+        observeReveals("#cases .reveal");
       }
     }
+
+    // If landing directly on #services or #why, run reveals
+    const landing = (location.hash || "").slice(1);
+    if (landing === "services") observeReveals("#services .reveal");
+    if (landing === "why") observeReveals("#why .reveal");
+    if (landing === "cases") observeReveals("#cases .reveal");
+
+    // Footer year
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    (function () {
+
+
+      // KPI row: fade in and count to 54% when 54% visible
+      (function () {
+        const kpiRow = document.querySelector('.kpi-row');
+        const kpiNumEl = document.querySelector('.kpi-num');
+        if (!kpiRow || !kpiNumEl) return;
+
+        function animateCount(el, from, to, duration) {
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            el.textContent = to + '%';
+            return;
+          }
+          const start = performance.now();
+          function step(now) {
+            const t = Math.min(1, (now - start) / duration);
+            const val = Math.round(from + (to - from) * t);
+            el.textContent = val + '%';
+            if (t < 1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+        }
+
+        const kpiObserver = new IntersectionObserver((entries, obs) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              kpiRow.classList.add('in');
+              animateCount(kpiNumEl, 0, 54, 900);
+              obs.disconnect();
+            }
+          });
+        }, { threshold: 0.54 });
+        kpiObserver.observe(kpiRow);
+      })();
+
+      // Case studies carousel behavior
+      (function () {
+        const carousel = document.querySelector('.cs-carousel');
+        if (!carousel) return;
+        const track = carousel.querySelector('.cs-track');
+        const prev = carousel.querySelector('.cs-prev');
+        const next = carousel.querySelector('.cs-next');
+        const items = Array.from(track.children);
+        let index = 0;
+
+        // Responsive items per page
+        function itemsPerPage() {
+          if (window.innerWidth >= 1200) return 3;
+          if (window.innerWidth >= 760) return 2;
+          return 1;
+        }
+
+        // pageIndex moves in pages; each page shows `ipp` items
+        let pageIndex = 0;
+
+        // function update() {
+        //   const ipp = itemsPerPage();
+        //   const pages = Math.max(1, Math.ceil(items.length / ipp));
+        //   // clamp pageIndex
+        //   pageIndex = Math.min(pageIndex, pages - 1);
+        //   const firstItemIndex = pageIndex * ipp;
+        //   const target = items[firstItemIndex] || items[0];
+        //   const offset = target.offsetLeft;
+        //   track.style.transform = `translateX(-${offset}px)`;
+        // }
+
+
+
+
+
+        function update() {
+          const ipp = itemsPerPage();
+          const pages = Math.max(1, Math.ceil(items.length / ipp));
+          pageIndex = Math.min(pageIndex, pages - 1);
+
+          const itemWidth = items[0].offsetWidth + 20; // account for gap
+          const translateX = pageIndex * itemWidth * ipp;
+
+          track.style.transform = `translateX(-${translateX}px)`;
+
+          // optional button disabling
+          prev.disabled = pageIndex === 0;
+          next.disabled = pageIndex === pages - 1;
+        }
+
+
+
+
+
+        function prevClick() {
+          const ipp = itemsPerPage();
+          const pages = Math.max(1, Math.ceil(items.length / ipp));
+          pageIndex = (pageIndex - 1 + pages) % pages;
+          update();
+        }
+        function nextClick() {
+          const ipp = itemsPerPage();
+          const pages = Math.max(1, Math.ceil(items.length / ipp));
+          pageIndex = (pageIndex + 1) % pages;
+          update();
+        }
+        prev.addEventListener('click', prevClick);
+        next.addEventListener('click', nextClick);
+
+        // Recompute when images load or window resizes; also reset pageIndex if needed
+        window.addEventListener('resize', () => setTimeout(() => { pageIndex = 0; update(); }, 80));
+        Array.from(track.querySelectorAll('img')).forEach(img => img.addEventListener('load', () => setTimeout(update, 60)));
+
+        // After transitionend, ensure transform target is accurate
+        track.addEventListener('transitionend', () => update());
+
+        // Resize handler
+        let rto;
+        window.addEventListener('resize', () => { clearTimeout(rto); rto = setTimeout(() => { index = Math.min(index, Math.max(0, items.length - itemsPerPage())); update(); }, 120); });
+
+        // Touch / swipe
+        let startX = null;
+        track.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; });
+        track.addEventListener('touchend', (e) => { if (startX === null) return; const dx = (e.changedTouches[0].clientX - startX); if (Math.abs(dx) > 40) { if (dx < 0) { nextClick(); } else { prevClick(); } } startX = null; });
+
+        // Keyboard navigation
+        carousel.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') prev.click(); if (e.key === 'ArrowRight') next.click(); });
+
+        // Initialize
+        // Ensure layout is ready before first positioning
+        setTimeout(update, 80);
+      })();
+    })();
+
+    // --- Mobile nav toggle (only used when CSS reveals nav-toggle at small widths) ---
+    (function () {
+      const navToggle = document.getElementById('navToggle');
+      const mobileNav = document.getElementById('mobile-nav');
+      const mobileClose = document.getElementById('mobileNavClose');
+      if (!navToggle || !mobileNav) return;
+
+      function openMobileNav() {
+        mobileNav.classList.add('open');
+        mobileNav.setAttribute('aria-hidden', 'false');
+        navToggle.setAttribute('aria-expanded', 'true');
+        document.documentElement.style.overflow = 'hidden';
+      }
+      function closeMobileNav() {
+        mobileNav.classList.remove('open');
+        mobileNav.setAttribute('aria-hidden', 'true');
+        navToggle.setAttribute('aria-expanded', 'false');
+        document.documentElement.style.overflow = '';
+        navToggle.focus();
+      }
+
+      window.closeMobileNav = closeMobileNav;
+
+      navToggle.addEventListener('click', function () {
+        const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+        if (expanded) closeMobileNav(); else openMobileNav();
+      });
+      if (mobileClose) mobileClose.addEventListener('click', closeMobileNav);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && mobileNav.classList.contains('open')) closeMobileNav();
+      });
+      mobileNav.addEventListener('click', function (e) {
+        if (e.target === mobileNav) closeMobileNav();
+      });
+    })();
+    // my script
+
   </script>
+
+
+
+<script>
+(function(){
+  try {
+    var target = (location.hash || '#home').slice(1);
+    var cta = document.querySelector('.cta-section');
+    if (cta) cta.style.display = (target === 'contact') ? 'none' : '';
+  } catch(e) {}
+})();
+</script>
+
 </body>
+
 </html>

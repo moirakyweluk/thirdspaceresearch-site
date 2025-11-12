@@ -4339,7 +4339,7 @@ header nav a.active {
     (function () {
 
 
-      // KPI row: fade in and count to 54% when 54% visible
+      // KPI row: fade in and count to 94% when 94% visible
       (function () {
         const kpiRow = document.querySelector('.kpi-row');
         const kpiNumEl = document.querySelector('.kpi-num');
@@ -4364,11 +4364,11 @@ header nav a.active {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
               kpiRow.classList.add('in');
-              animateCount(kpiNumEl, 0, 54, 900);
+              animateCount(kpiNumEl, 0, 94, 900);
               obs.disconnect();
             }
           });
-        }, { threshold: 0.54 });
+        }, { threshold: 0.94 });
         kpiObserver.observe(kpiRow);
       })();
 
@@ -4520,3 +4520,4 @@ header nav a.active {
 </body>
 
 </html>
+
